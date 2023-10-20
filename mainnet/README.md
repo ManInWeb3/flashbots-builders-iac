@@ -1,1 +1,1 @@
-Just a placeholder to show how other chains can be organised
+Just a placeholder to show how other networks can be organised
