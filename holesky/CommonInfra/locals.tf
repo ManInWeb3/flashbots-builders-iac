@@ -6,15 +6,15 @@ locals {
     "us-east-1a"
   ]
 
-  environment = "dev"
+  ethereum_network = "holesky"
 
-  name   = "${local.environment}-builders-vpc"
+  name   = "${local.ethereum_network}-builders-vpc"
 
   vpc_cidr = "10.0.0.0/16"
 
   tags = {
     Component   = "builder"
-    Environment = local.environment
+    Ethereum_network = local.ethereum_network
     Team        = "devops@ttt.com"
     GithubRepo = "flashbots-builders-infra"
   }
