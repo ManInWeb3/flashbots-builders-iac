@@ -13,10 +13,10 @@ module "vpc" {
   name = local.name
   cidr = local.vpc_cidr
 
-  azs                 = local.azs
-  private_subnets     = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k)]
-  public_subnets      = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 4)]
-  # elasticache_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 8)]
+  azs                 = var.azs
+  private_subnets     = [for k, v in var.azs : cidrsubnet(local.vpc_cidr, 8, k)]
+  public_subnets      = [for k, v in var.azs : cidrsubnet(local.vpc_cidr, 8, k + 4)]
+  # elasticache_subnets = [for k, v in var.azs : cidrsubnet(local.vpc_cidr, 8, k + 8)]
 
   public_dedicated_network_acl   = true
   public_inbound_acl_rules       = concat(local.network_acls["default_inbound"], local.network_acls["public_inbound"])

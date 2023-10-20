@@ -1,23 +1,10 @@
 
 locals {
-  # Region and AZ
-  region = "us-east-1"
-  azs    = [
-    "us-east-1a"
-  ]
+  ###* Sometimes it's more convinient to define input values as locals, instead of variables
+  ###* this could be more convinient because: you can see all the values in a shorter form in one file - kinda a config file
 
   ethereum_network = "holesky"
-
-  name   = "${local.ethereum_network}-builders-vpc"
-
   vpc_cidr = "10.0.0.0/16"
-
-  tags = {
-    Component   = "builder"
-    Ethereum_network = local.ethereum_network
-    Team        = "devops@ttt.com"
-    GithubRepo = "flashbots-builders-infra"
-  }
 
   network_acls = {
     default_inbound = [
@@ -68,7 +55,7 @@ locals {
         cidr_block  = "0.0.0.0/0"
       },
       {
-        rule_number = 110
+        rule_number = 11
         rule_action = "allow"
         from_port   = 443
         to_port     = 443
@@ -77,4 +64,15 @@ locals {
       },
     ]
   }
+
+  tags = {
+    Component   = "builder"
+    EthereumNetwork = local.ethereum_network
+    Team        = "devops@ttt.com"
+    GithubRepo = "flashbots-builders-infra"
+  }
+
+  # Calculated vars
+  name   = "${local.ethereum_network}-builders-vpc"
+
 }
