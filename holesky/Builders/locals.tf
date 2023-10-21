@@ -1,50 +1,36 @@
 
 locals {
-  # Region and AZ
-  region = "us-east-1"
-  azs    = [
-    "us-east-1a"
-  ]
 
   ethereum_network = "holesky"
 
-  name   = "${local.environment}-builders-vpc"
+  # name   = "${local.environment}-builders-vpc"
 
-  vpc_cidr = "10.0.0.0/16"
+  vpc_name     = "${local.environment}-builders-vpc"
+  subnet_names = [
+    "${local.environment}-builders-vpc-private-us-east-1a",
+  ]
 
-  multiple_instances = {
-    one = {
-      instance_type     = "t3.micro"
-      availability_zone = element(module.vpc.azs, 0)
-      subnet_id         = element(module.vpc.private_subnets, 0)
-      root_block_device = [
-        {
-          encrypted   = true
-          volume_type = "gp3"
-          throughput  = 200
-          volume_size = 50
-          tags = {
-            Name = "my-root-block"
-          }
-        }
-      ]
+  # Commont EC2 settings
+  instance_type     = "t3.micro"
+  availability_zone = element(module.vpc.azs, 0)
+  subnet_id         = element(module.vpc.private_subnets, 0)
+  root_block_device = [
+    {
+      encrypted   = true
+      volume_type = "gp3"
+      throughput  = 200
+      volume_size = 50
+      tags = {
+        Name = "my-root-block"
+      }
     }
-    two = {
-      instance_type     = "t3.small"
-      availability_zone = element(module.vpc.azs, 1)
-      subnet_id         = element(module.vpc.private_subnets, 1)
-      root_block_device = [
-        {
-          encrypted   = true
-          volume_type = "gp2"
-          volume_size = 50
-        }
-      ]
-    }
-    three = {
-      instance_type     = "t3.medium"
-      availability_zone = element(module.vpc.azs, 2)
-      subnet_id         = element(module.vpc.private_subnets, 2)
+  ]
+  root_volume_size = 20
+  data_volume_size = 10
+
+  ec2_instances = {
+    key_111_333 = {
+      key_id = "dsfsdfsdfsd"
     }
   }
 
