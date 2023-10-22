@@ -26,10 +26,9 @@ module "vpc" {
 
   manage_default_network_acl = true
 
-
-  # Deploy only one NAT gw
-  enable_nat_gateway = true
-  single_nat_gateway = true
+  # We attach a public IP to the host so Don't need NAT gateway
+  enable_nat_gateway = false
+  single_nat_gateway = false
   one_nat_gateway_per_az = false
 
   # private_subnet_tags = {

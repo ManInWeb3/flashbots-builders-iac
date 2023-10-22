@@ -17,7 +17,7 @@ data "aws_subnet" "this" {
 resource "aws_ebs_volume" "data" {
   for_each = local.builder_instances
 
-  availability_zone = data.aws_subnet.this[each.key].availability_zone
+  availability_zone = data.aws_subnet.this[each.key].availability_zone #lookup(each.value, "availability_zone", null)
   size              = local.data_volume_size
 
   tags = merge(
@@ -29,6 +29,7 @@ resource "aws_ebs_volume" "data" {
   )
 }
 
+
 module "builder_instances" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = ">= 5.5.0, < 6.0.0"
@@ -39,11 +40,9 @@ module "builder_instances" {
   instance_type          = local.builders_instance_type
   availability_zone      = data.aws_subnet.this[each.key].availability_zone
   subnet_id              = each.value.subnet_id
-  # vpc_security_group_ids = [local.ssm_security_group_id]
-
-  # External IP to expose p2p and ssh
+  vpc_security_group_ids = [local.ssm_security_group_id]
+  # External IP to expose p2p
   associate_public_ip_address = true
-
   ami                = data.aws_ami.amazon_linux_latest.id
   ignore_ami_changes = true              #! Don't re-create instance if newer image found
 
@@ -61,6 +60,13 @@ module "builder_instances" {
       volume_size = local.root_volume_size
     },
   ]
+
+  #* SSM
+  create_iam_instance_profile = true
+  iam_role_description        = "IAM role for EC2 instance"
+  iam_role_policies = {
+    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  }
 
   tags = merge(
     {
