@@ -45,7 +45,7 @@ locals {
         cidr_block  = "0.0.0.0/0"
       },
       {
-        rule_number = 110
+        rule_number = 111
         rule_action = "allow"
         from_port   = 30303
         to_port     = 30303
@@ -55,19 +55,19 @@ locals {
     ]
     public_outbound = [
       {
-        rule_number = 100
+        rule_number = 10
         rule_action = "allow"
-        from_port   = 80
-        to_port     = 80
+        from_port   = 0
+        to_port     = 65535
         protocol    = "tcp"
         cidr_block  = "0.0.0.0/0"
       },
       {
         rule_number = 11
         rule_action = "allow"
-        from_port   = 443
-        to_port     = 443
-        protocol    = "tcp"
+        from_port   = 0
+        to_port     = 65535
+        protocol    = "udp"
         cidr_block  = "0.0.0.0/0"
       },
     ]
