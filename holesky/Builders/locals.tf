@@ -1,46 +1,39 @@
 
 locals {
-
   ethereum_network = "holesky"
 
-  # name   = "${local.environment}-builders-vpc"
+  vpc_name     = "${local.ethereum_network}-builders-vpc"
+  subnets_name_preffix = "${local.ethereum_network}-builders-vpc-private-"   #* Subnet names without AZ name
+  builder_instances = {
+    "builder-111_333" = {
+      availability_zone = "us-east-1a"
+      key_id            = "dsfsdfsdfsd"
+    },
+    # key_222_333 = {
+    #   key_id = "dsfsdfsdfsd"
+    # },
 
-  vpc_name     = "${local.environment}-builders-vpc"
-  subnet_names = [
-    "${local.environment}-builders-vpc-private-us-east-1a",
-  ]
+  }
 
-  # Commont EC2 settings
-  instance_type     = "t3.micro"
-  availability_zone = element(module.vpc.azs, 0)
-  subnet_id         = element(module.vpc.private_subnets, 0)
-  root_block_device = [
-    {
-      encrypted   = true
-      volume_type = "gp3"
-      throughput  = 200
-      volume_size = 50
-      tags = {
-        Name = "my-root-block"
-      }
-    }
-  ]
+
+  # Commont Builders settings
+  builder_instances_type     = "t3.micro"
+  # availability_zone = element(module.vpc.azs, 0)
+  # subnet_id         = element(module.vpc.private_subnets, 0)
   root_volume_size = 20
   data_volume_size = 10
-
-  ec2_instances = {
-    key_111_333 = {
-      key_id = "dsfsdfsdfsd"
-    }
-  }
+  # user_data = <<-EOT
+  #   #!/bin/bash
+  #   echo "Hello Terraform!"
+  # EOT
 
 
 
   tags = {
     Component   = "builder"
-    Environment = local.environment
+    Environment = local.ethereum_network
     Team        = "devops@ttt.com"
-    GithubRepo = "flashbots-builders-infra"
+    GithubRepo = "flashbots-builders-iac"
   }
 
 }

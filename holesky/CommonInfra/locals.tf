@@ -66,10 +66,10 @@ locals {
   }
 
   tags = {
-    Component   = "builder"
+    Component   = "builders-CommonInfra"
     EthereumNetwork = local.ethereum_network
     Team        = "devops@ttt.com"
-    GithubRepo = "flashbots-builders-infra"
+    GithubRepo = "flashbots-builders-iac"
   }
 
   # Calculated vars
