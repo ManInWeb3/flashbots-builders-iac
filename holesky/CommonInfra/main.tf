@@ -56,12 +56,14 @@ module "security_group_instance" {
       cidr_blocks = "121.98.71.217/32"
     },
     {
+      from_port     = 30303
       to_port     = 30303
       protocol    = "tcp"
       description = "Geth P2P tcp"
       cidr_blocks = "0.0.0.0/0"
     },
     {
+      from_port     = 30303
       to_port     = 30303
       protocol    = "udp"
       description = "Geth P2P udp"
