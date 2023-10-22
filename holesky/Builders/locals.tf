@@ -1,5 +1,6 @@
 
 locals {
+  region = "us-east-1"
   ethereum_network = "holesky"
 
   # vpc_name     = "${local.ethereum_network}-builders-vpc"
