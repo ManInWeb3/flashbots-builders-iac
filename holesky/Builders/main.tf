@@ -1,13 +1,3 @@
-data "aws_ami" "amazon_linux_latest" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["amzn-ami-hvm-*-x86_64-gp2"]
-  }
-}
-
 data "aws_subnet" "this" {
   for_each = local.builder_instances
 
@@ -44,7 +34,7 @@ module "builder_instances" {
 
   # External IP to expose p2p
   associate_public_ip_address = true
-  ami                = data.aws_ami.amazon_linux_latest.id
+  # ami                = data.aws_ami.amazon_linux_latest.id
   ignore_ami_changes = true              #! Don't re-create instance if newer image found
 
   user_data_replace_on_change = true     #! Re-create the instance on each new release
