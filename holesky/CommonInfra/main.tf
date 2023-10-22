@@ -18,9 +18,10 @@ module "vpc" {
   public_subnets      = [for k, v in var.azs : cidrsubnet(local.vpc_cidr, 8, k + 4)]
   # elasticache_subnets = [for k, v in var.azs : cidrsubnet(local.vpc_cidr, 8, k + 8)]
 
+  #! Use default ACL allow all<->all
   # public_dedicated_network_acl   = true
-  public_inbound_acl_rules       = local.network_acls["public_inbound"]  #concat(local.network_acls["default_inbound"], local.network_acls["public_inbound"])
-  public_outbound_acl_rules      = local.network_acls["public_outbound"] #concat(local.network_acls["default_outbound"], local.network_acls["public_outbound"])
+  # public_inbound_acl_rules       = local.network_acls["public_inbound"]  #concat(local.network_acls["default_inbound"], local.network_acls["public_inbound"])
+  # public_outbound_acl_rules      = local.network_acls["public_outbound"] #concat(local.network_acls["default_outbound"], local.network_acls["public_outbound"])
 
   # private_dedicated_network_acl     = false
 
@@ -52,10 +53,10 @@ module "security_group_instance" {
 
 
   ingress_with_cidr_blocks = [
-    {                                        
-      rule        = "ssh-tcp"
-      cidr_blocks = "121.98.71.217/32"
-    },
+    # {                                        
+    #   rule        = "ssh-tcp"
+    #   cidr_blocks = "121.98.71.217/32"
+    # },
     {
       from_port     = 30303
       to_port     = 30303
