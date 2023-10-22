@@ -17,9 +17,9 @@ locals {
 
   }
 
-
+  ssm_security_group_id = "sg-02ba425d18618e505"
   # Commont Builders settings
-  builder_instances_type     = "t3.micro"
+  builders_instance_type     = "t3.micro"
   # availability_zone = element(module.vpc.azs, 0)
   # subnet_id         = element(module.vpc.private_subnets, 0)
   root_volume_size = 20

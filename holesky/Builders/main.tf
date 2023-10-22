@@ -37,10 +37,10 @@ module "builder_instances" {
   for_each = local.builder_instances
 
   name = each.key
-  instance_type          = local.builder_instances_type
+  instance_type          = local.builders_instance_type
   availability_zone      = data.aws_subnet.this[each.key].availability_zone
   subnet_id              = each.value.subnet_id
-  # vpc_security_group_ids = [module.security_group.security_group_id]                 
+  vpc_security_group_ids = [local.ssm_security_group_id]
 
   ami                = data.aws_ami.amazon_linux_latest.id
   ignore_ami_changes = true              #! Don't re-create instance if newer image found
