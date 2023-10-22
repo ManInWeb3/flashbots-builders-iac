@@ -40,7 +40,8 @@ module "builder_instances" {
   instance_type          = local.builders_instance_type
   availability_zone      = data.aws_subnet.this[each.key].availability_zone
   subnet_id              = each.value.subnet_id
-  vpc_security_group_ids = [local.ssm_security_group_id]
+  vpc_security_group_ids = concat(local.builders_security_group_id, [local.ssm_security_group_id])
+
   # External IP to expose p2p
   associate_public_ip_address = true
   ami                = data.aws_ami.amazon_linux_latest.id

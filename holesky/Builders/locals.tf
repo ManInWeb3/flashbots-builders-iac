@@ -1,4 +1,8 @@
 
+#* DEPENDENCIES:
+#*  1. Secret key created and specified ...
+
+
 locals {
   region = "us-east-1"
   ethereum_network = "holesky"
@@ -16,8 +20,10 @@ locals {
     # },
 
   }
+  # Security groups
+  ssm_security_group_id      = "sg-054a38c68fdde49fe"
+  builders_security_group_id = ["sg-0b585ec7a7c290e96"]
 
-  ssm_security_group_id = "sg-054a38c68fdde49fe"
   # Commont Builders settings
   builders_instance_type     = "t3.micro"
   # availability_zone = element(module.vpc.azs, 0)
