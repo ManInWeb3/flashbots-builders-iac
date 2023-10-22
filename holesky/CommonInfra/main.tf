@@ -1,7 +1,6 @@
 
 data "aws_availability_zones" "available" {}
 
-
 ################################################################################
 # VPC Module
 ################################################################################
@@ -40,40 +39,6 @@ module "vpc" {
   # }
   tags = local.tags
 
-}
-
-module "security_group_instance" {
-  source  = "terraform-aws-modules/security-group/aws"
-  version = ">= 5.1.0, < 6.0.0"
-
-  name        = "${local.name}-ec2"
-  description = "Builders Security Group"
-
-  vpc_id = module.vpc.vpc_id
-
-
-  ingress_with_cidr_blocks = [
-    # {                                        
-    #   rule        = "ssh-tcp"
-    #   cidr_blocks = "121.98.71.217/32"
-    # },
-    {
-      from_port     = 30303
-      to_port     = 30303
-      protocol    = "tcp"
-      description = "Geth P2P tcp"
-      cidr_blocks = "0.0.0.0/0"
-    },
-    {
-      from_port     = 30303
-      to_port     = 30303
-      protocol    = "udp"
-      description = "Geth P2P udp"
-      cidr_blocks = "0.0.0.0/0"
-    },
-  ]
-
-  tags = local.tags
 }
 
 #* Session Manager's endpoints
