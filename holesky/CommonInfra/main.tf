@@ -46,12 +46,28 @@ module "security_group_instance" {
   version = ">= 5.1.0, < 6.0.0"
 
   name        = "${local.name}-ec2"
-  description = "Security Group for EC2 Instance Egress"
+  description = "Builders Security Group"
 
   vpc_id = module.vpc.vpc_id
 
-  egress_rules = ["https-443-tcp"]
-
+  ingress_with_cidr_blocks = [
+    {                                        
+      rule        = "ssh-tcp"
+      cidr_blocks = "121.98.71.217/32"
+    },
+    {
+      to_port     = 30303
+      protocol    = "tcp"
+      description = "Geth P2P tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      to_port     = 30303
+      protocol    = "udp"
+      description = "Geth P2P udp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+  ]
   tags = local.tags
 }
 
