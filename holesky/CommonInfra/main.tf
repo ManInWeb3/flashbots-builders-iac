@@ -27,9 +27,9 @@ module "vpc" {
   # manage_default_network_acl = true
 
   # We attach a public IP to the host so Don't need NAT gateway
-  enable_nat_gateway = false
-  single_nat_gateway = false
-  one_nat_gateway_per_az = false
+  # enable_nat_gateway = false
+  # single_nat_gateway = false
+  # one_nat_gateway_per_az = false
 
   # private_subnet_tags = {
   #   Name = "private-${local.name}"
@@ -49,6 +49,7 @@ module "security_group_instance" {
   description = "Builders Security Group"
 
   vpc_id = module.vpc.vpc_id
+
 
   ingress_with_cidr_blocks = [
     {                                        
@@ -70,6 +71,7 @@ module "security_group_instance" {
       cidr_blocks = "0.0.0.0/0"
     },
   ]
+
   tags = local.tags
 }
 
