@@ -19,6 +19,38 @@ resource "aws_ebs_volume" "data" {
   )
 }
 
+module "builder_security_group" {
+  source  = "terraform-aws-modules/security-group/aws"
+  version = ">= 5.1.0, < 6.0.0"
+
+  name        = "builders-security-group"
+  description = "Builders Security Group"
+
+  vpc_id = local.vpc_id   #module.vpc.vpc_id
+
+  ingress_with_cidr_blocks = [
+    # {                                        
+    #   rule        = "ssh-tcp"
+    #   cidr_blocks = "121.98.71.217/32"
+    # },
+    {
+      from_port     = 30303
+      to_port     = 30303
+      protocol    = "tcp"
+      description = "Geth P2P tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      from_port     = 30303
+      to_port     = 30303
+      protocol    = "udp"
+      description = "Geth P2P udp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+  ]
+
+  tags = local.tags
+}
 
 module "builder_instances" {
   source  = "terraform-aws-modules/ec2-instance/aws"
@@ -31,7 +63,10 @@ module "builder_instances" {
   instance_type          = local.builders_instance_type
   availability_zone      = data.aws_subnet.this[each.key].availability_zone
   subnet_id              = each.value.subnet_id
-  vpc_security_group_ids = concat(local.builders_security_group_id, [local.ssm_security_group_id])
+  vpc_security_group_ids = [
+    module.builder_security_group.security_group_id,
+    local.ssm_security_group_id,
+  ]
 
   # External IP to expose p2p
   associate_public_ip_address = true

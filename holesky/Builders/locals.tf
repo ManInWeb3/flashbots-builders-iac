@@ -7,6 +7,7 @@ locals {
   region = "us-east-1"
   ethereum_network = "holesky"
 
+  vpc_id = "vpc-0aa923abc5e9486b0"
   # vpc_name     = "${local.ethereum_network}-builders-vpc"
   # subnets_name_preffix = "${local.ethereum_network}-builders-vpc-private-"   #* Subnets name without AZ name
   builder_instances = {
