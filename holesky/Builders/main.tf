@@ -15,10 +15,10 @@ resource "aws_ebs_volume" "data" {
   size              = local.data_volume_size
 
   tags = merge(
-    map(
-      "Availability_Zone", lookup(each.value, "availability_zone", null),
-      "Name", each.key,
-    ),
+    {
+      "Availability_Zone" = lookup(each.value, "availability_zone", null),
+      "Name" = each.key,
+    },
     local.tags
   )
 }
@@ -52,7 +52,10 @@ module "builder_instances" {
       volume_size = local.root_volume_size
     },
   ]
-  tags = merge(map("Builder_Key", each.key,),local.tags)
+  tags = merge(
+    map("Builder_Key", each.key,),
+    local.tags
+  )
 }
 
 resource "aws_volume_attachment" "data" {
