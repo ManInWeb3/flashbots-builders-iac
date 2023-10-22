@@ -73,32 +73,32 @@ module "security_group_instance" {
   tags = local.tags
 }
 
-# #* Session Manager's endpoints
-# module "vpc_endpoints" {
-#   source  = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
-#   version = ">= 5.1.2, < 6.0.0"
+#* Session Manager's endpoints
+module "vpc_endpoints" {
+  source  = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
+  version = ">= 5.1.2, < 6.0.0"
 
-#   vpc_id = module.vpc.vpc_id
+  vpc_id = module.vpc.vpc_id
 
-#   endpoints = { for service in toset(["ssm", "ssmmessages", "ec2messages"]) :
-#     replace(service, ".", "_") =>
-#     {
-#       service             = service
-#       subnet_ids          = module.vpc.private_subnets
-#       private_dns_enabled = true
-#       tags                = { Name = "${local.name}-${service}" }
-#     }
-#   }
+  endpoints = { for service in toset(["ssm", "ssmmessages", "ec2messages"]) :
+    replace(service, ".", "_") =>
+    {
+      service             = service
+      subnet_ids          = module.vpc.public_subnets
+      private_dns_enabled = true
+      tags                = { Name = "${local.name}-${service}" }
+    }
+  }
 
-#   create_security_group      = true
-#   security_group_name_prefix = "${local.name}-vpc-endpoints-"
-#   security_group_description = "VPC endpoint security group"
-#   security_group_rules = {
-#     ingress_https = {
-#       description = "HTTPS from subnets"
-#       cidr_blocks = module.vpc.private_subnets_cidr_blocks
-#     }
-#   }
+  create_security_group      = true
+  security_group_name_prefix = "${local.name}-vpc-endpoints"
+  security_group_description = "VPC endpoint security group"
+  security_group_rules = {
+    ingress_https = {
+      description = "HTTPS from subnets"
+      cidr_blocks = module.vpc.public_subnets_cidr_blocks
+    }
+  }
 
-#   tags = local.tags
-# }
+  tags = local.tags
+}
