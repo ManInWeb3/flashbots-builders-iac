@@ -79,7 +79,7 @@ module "vpc_endpoints" {
   security_group_rules = {
     ingress_https = {
       description = "HTTPS from subnets"
-      cidr_blocks = module.vpc.intra_subnets_cidr_blocks
+      cidr_blocks = module.vpc.private_subnets_cidr_blocks
     }
   }
 
