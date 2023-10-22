@@ -53,24 +53,24 @@ locals {
         cidr_block  = "0.0.0.0/0"
       },
     ]
-    # public_outbound = [
-    #   {
-    #     rule_number = 100
-    #     rule_action = "allow"
-    #     from_port   = 80
-    #     to_port     = 80
-    #     protocol    = "tcp"
-    #     cidr_block  = "0.0.0.0/0"
-    #   },
-    #   {
-    #     rule_number = 11
-    #     rule_action = "allow"
-    #     from_port   = 443
-    #     to_port     = 443
-    #     protocol    = "tcp"
-    #     cidr_block  = "0.0.0.0/0"
-    #   },
-    # ]
+    public_outbound = [
+      {
+        rule_number = 100
+        rule_action = "allow"
+        from_port   = 80
+        to_port     = 80
+        protocol    = "tcp"
+        cidr_block  = "0.0.0.0/0"
+      },
+      {
+        rule_number = 11
+        rule_action = "allow"
+        from_port   = 443
+        to_port     = 443
+        protocol    = "tcp"
+        cidr_block  = "0.0.0.0/0"
+      },
+    ]
   }
 
   tags = {
