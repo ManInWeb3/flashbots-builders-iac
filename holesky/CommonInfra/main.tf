@@ -14,17 +14,17 @@ module "vpc" {
   cidr = local.vpc_cidr
 
   azs                 = var.azs
-  private_subnets     = [for k, v in var.azs : cidrsubnet(local.vpc_cidr, 8, k)]
-  # public_subnets      = [for k, v in var.azs : cidrsubnet(local.vpc_cidr, 8, k + 4)]
+  # private_subnets     = [for k, v in var.azs : cidrsubnet(local.vpc_cidr, 8, k)]
+  public_subnets      = [for k, v in var.azs : cidrsubnet(local.vpc_cidr, 8, k + 4)]
   # elasticache_subnets = [for k, v in var.azs : cidrsubnet(local.vpc_cidr, 8, k + 8)]
 
-  # public_dedicated_network_acl   = true
-  # public_inbound_acl_rules       = concat(local.network_acls["default_inbound"], local.network_acls["public_inbound"])
-  # public_outbound_acl_rules      = concat(local.network_acls["default_outbound"], local.network_acls["public_outbound"])
+  public_dedicated_network_acl   = true
+  public_inbound_acl_rules       = concat(local.network_acls["default_inbound"], local.network_acls["public_inbound"])
+  public_outbound_acl_rules      = concat(local.network_acls["default_outbound"], local.network_acls["public_outbound"])
 
   # private_dedicated_network_acl     = false
 
-  manage_default_network_acl = true
+  # manage_default_network_acl = true
 
   # We attach a public IP to the host so Don't need NAT gateway
   enable_nat_gateway = false
