@@ -53,7 +53,9 @@ module "builder_instances" {
     },
   ]
   tags = merge(
-    map("Builder_Key", each.key,),
+    {
+      "Builder_Key" = each.key,
+    },
     local.tags
   )
 }
