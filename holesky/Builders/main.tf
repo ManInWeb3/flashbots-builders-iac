@@ -59,6 +59,14 @@ module "builder_instances" {
       volume_size = local.root_volume_size
     },
   ]
+
+  #* SSM
+  create_iam_instance_profile = true
+  iam_role_description        = "IAM role for EC2 instance"
+  iam_role_policies = {
+    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  }
+
   tags = merge(
     {
       "Builder_Key" = each.key,
