@@ -18,7 +18,7 @@ module "vpc" {
   public_subnets      = [for k, v in var.azs : cidrsubnet(local.vpc_cidr, 8, k + 4)]
   # elasticache_subnets = [for k, v in var.azs : cidrsubnet(local.vpc_cidr, 8, k + 8)]
 
-  public_dedicated_network_acl   = true
+  # public_dedicated_network_acl   = true
   public_inbound_acl_rules       = local.network_acls["public_inbound"]  #concat(local.network_acls["default_inbound"], local.network_acls["public_inbound"])
   public_outbound_acl_rules      = local.network_acls["public_outbound"] #concat(local.network_acls["default_outbound"], local.network_acls["public_outbound"])
 
