@@ -8,10 +8,16 @@ data "aws_ami" "amazon_linux_latest" {
   }
 }
 
+data "aws_subnet" "this" {
+  for_each = local.builder_instances
+
+  id = each.value.subnet_id
+}
+
 resource "aws_ebs_volume" "data" {
   for_each = local.builder_instances
 
-  availability_zone = lookup(each.value, "availability_zone", null)
+  availability_zone = data.aws_subnet.this[each.key].availability_zone #lookup(each.value, "availability_zone", null)
   size              = local.data_volume_size
 
   tags = merge(
@@ -23,11 +29,6 @@ resource "aws_ebs_volume" "data" {
   )
 }
 
-data "aws_subnet" "this" {
-  for_each = local.builder_instances
-
-  id = each.value.subnet_id
-}
 
 module "builder_instances" {
   source  = "terraform-aws-modules/ec2-instance/aws"
