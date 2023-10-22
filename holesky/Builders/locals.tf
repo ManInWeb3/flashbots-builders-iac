@@ -12,8 +12,8 @@ locals {
   builder_instances = {
     "builder-111_333" = {
       # availability_zone = "us-east-1a"
-      subnet_id  = "subnet-0a562dea1a169ef64"
-      key_id            = "dsfsdfsdfsd"
+      subnet_id  = "subnet-0b8d187f0c60263f5"
+      key_id            = "111dsfsdfsdfsd333"
     },
     # key_222_333 = {
     #   key_id = "dsfsdfsdfsd"
@@ -21,7 +21,7 @@ locals {
 
   }
   # Security groups
-  ssm_security_group_id      = "sg-054a38c68fdde49fe"
+  ssm_security_group_id      = "sg-039ec2c1a094dfb1d"
   builders_security_group_id = ["sg-0b585ec7a7c290e96"]
 
   # Commont Builders settings
