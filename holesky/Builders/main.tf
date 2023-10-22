@@ -27,6 +27,7 @@ module "builder_instances" {
   for_each = local.builder_instances
 
   name = each.key
+  key_name = "vlad"                      
   instance_type          = local.builders_instance_type
   availability_zone      = data.aws_subnet.this[each.key].availability_zone
   subnet_id              = each.value.subnet_id
