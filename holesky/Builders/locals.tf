@@ -2,11 +2,12 @@
 locals {
   ethereum_network = "holesky"
 
-  vpc_name     = "${local.ethereum_network}-builders-vpc"
-  subnets_name_preffix = "${local.ethereum_network}-builders-vpc-private-"   #* Subnet names without AZ name
+  # vpc_name     = "${local.ethereum_network}-builders-vpc"
+  # subnets_name_preffix = "${local.ethereum_network}-builders-vpc-private-"   #* Subnets name without AZ name
   builder_instances = {
     "builder-111_333" = {
-      availability_zone = "us-east-1a"
+      # availability_zone = "us-east-1a"
+      subnet_id  = "subnet-0a562dea1a169ef64"
       key_id            = "dsfsdfsdfsd"
     },
     # key_222_333 = {

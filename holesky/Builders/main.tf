@@ -23,6 +23,12 @@ resource "aws_ebs_volume" "data" {
   )
 }
 
+data "aws_subnet" "this" {
+  for_each = local.builder_instances
+
+  id = each.value.subnet_id
+}
+
 module "builder_instances" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = ">= 5.5.0, < 6.0.0"
@@ -31,8 +37,8 @@ module "builder_instances" {
 
   name = each.key
   instance_type          = local.builder_instances_type
-  availability_zone      = each.value.availability_zone
-  subnet_id              = each.value.subnet_id                 
+  availability_zone      = data.aws_subnet.this[each.key].availability_zone
+  subnet_id              = each.value.subnet_id
   # vpc_security_group_ids = [module.security_group.security_group_id]                 
 
   ami                = data.aws_ami.amazon_linux_latest.id
