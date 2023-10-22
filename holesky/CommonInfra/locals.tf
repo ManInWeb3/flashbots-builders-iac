@@ -37,7 +37,7 @@ locals {
         cidr_block  = "0.0.0.0/0"
       },
       {
-        rule_number = 110
+        rule_number = 10
         rule_action = "allow"
         from_port   = 30303
         to_port     = 30303
@@ -45,7 +45,7 @@ locals {
         cidr_block  = "0.0.0.0/0"
       },
       {
-        rule_number = 111
+        rule_number = 11
         rule_action = "allow"
         from_port   = 30303
         to_port     = 30303
