@@ -73,5 +73,5 @@ locals {
   }
 
   # Calculated vars
-  name   = "${local.ethereum_network}-builders-vpc"
+  name   = "${local.ethereum_network}-builders"
 }
