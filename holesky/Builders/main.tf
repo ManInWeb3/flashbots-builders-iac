@@ -48,7 +48,7 @@ module "builder_security_group" {
       cidr_blocks = "0.0.0.0/0"
     },
   ]
-  2gress_with_cidr_blocks = [
+  egress_with_cidr_blocks = [
     { #* Required for SSM session manager
       from_port   = 443
       to_port     = 443
