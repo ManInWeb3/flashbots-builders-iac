@@ -1,52 +1,68 @@
 #!/bin/bash
+
 # Updating the system
 yum update -y
 
-DATADIR="/data"
+DATA_DIR="/data"
+DATA_VOL_SERIAL="$(printf ${data_volume_id} | sed 's/vol-/vol/')"
+DATA_VOL_DEVICE="/dev/$(printf ${data_volume_id} | sed 's/vol-/vol/' | awk '{print($1)}')"
 
-
-lsblk
-
-while [ ! -e "${data_volume_device}" ] ; do
-  echo "Waiting for ${data_volume_device} ..."
-  sleep 2
+mkdir -p $DATA_DIR
+while ! lsblk -o +SERIAL|grep $DATA_VOL_SERIAL ; do
+  echo "Waiting for data volume to be attached..."
+  sleep 1
 done
+
+#* Format data disk if not formatted
+if ! blkid $DATA_VOL_DEVICE $DATA_DIR|grep 'TYPE="xfs"'; then
+  mkfs.xfs $DATA_VOL_DEVICE
+fi
+#* Mount data disk
+mount $DATA_VOL_DEVICE $DATA_DIR
 
 lsblk
 
 BUILDER_RELEASE="${builder_release}"
+BUILDER_USR="builder"
 
 PRYSM_RELEASE="v4.1.0"
 PRYSM_RELEASE_URL="https://github.com/prysmaticlabs/prysm/releases/download/$PRYSM_RELEASE/beacon-chain-$PRYSM_RELEASE-alpha.1-linux-amd64"
 PRYSM_BC_BIN="/usr/local/bin/beacon-chain"
+PRYSM_BC_SYSTEMD_SERVICE="$DATA_DIR/prysm_beacon-chain.service"
 
-JWT_PATH="$DATADIR/${ethereum_network}/jwt.hex"
+JWT_PATH="$DATA_DIR/${ethereum_network}/jwt.hex"
 
 curl -Lo $PRYSM_BC_BIN $PRYSM_RELEASE_URL
 chmod a+x $PRYSM_BC_BIN
 
-cat > /etc/systemd/system/prysm_beacon-chain.service <<EOF
+#* Create user to run the services
+adduser --no-create-home --system $BUILDER_USR
+
+#* Create systemd service file
+cat > $PRYSM_BC_SYSTEMD_SERVICE <<EOF
 [Unit]
 Description=ETH2 Prysm cli
 # Requires=new dependency
 # After=new dependency
+After=network.target #geth.socket
+# Requires=geth.socket
 
 [Service]
 Type=simple
+User=$BUILDER_USR
 ExecStart=$PRYSM_BC_BIN --accept-terms-of-use \\
-            --datadir=$DATADIR/${ethereum_network}/$(basename $PRYSM_BC_BIN) \\
+            --DATA_DIR=$DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN) \\
             --${ethereum_network} \\
             --execution-endpoint=http://localhost:8551 \\
             --jwt-secret=$JWT_PATH \\
-            --log-file=$DATADIR/${ethereum_network}/$(basename $PRYSM_BC_BIN).log \\
+            --log-file=$DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN).log \\
             --checkpoint-sync-url=https://holesky.beaconstate.ethstaker.cc/
 
 [Install]
 WantedBy=default.target
 EOF
 
-
-# echo "11111111111" > $DATADIR/ttttt
+# echo "11111111111" > $DATA_DIR/ttttt
 # systemctl --user enable /root/geth.service
 # systemctl --user start geth.service
 
