@@ -74,8 +74,9 @@ module "builder_instances" {
     local.ssm_security_group_id,
   ]
 
-  # # OPTIONAL External IP to expose p2p
-  # associate_public_ip_address = true
+  # External IP to expose p2p
+  #* This is optional, can be without external IP, but then we need NAT gw to connect to the Internet
+  associate_public_ip_address = true
   ignore_ami_changes = true              #! Don't re-create instance if newer image found
   user_data_replace_on_change = true     #! Re-create the instance if user_data changed, which is when new release deployed
   user_data_base64 = base64encode(templatefile("files/user_data.sh.tftpl", {
