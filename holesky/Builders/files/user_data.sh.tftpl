@@ -1,0 +1,40 @@
+#!/bin/bash
+# Updating the system
+yum update -y
+
+ETHEREUM_NETWORK="${ethereum_network}"
+DATADIR="/data"
+
+BUILDER_RELEASE="${builder_release}"
+
+PRYSM_RELEASE="v4.1.0"
+PRYSM_RELEASE_URL="https://github.com/prysmaticlabs/prysm/releases/download/${PRYSM_RELEASE}/beacon-chain-${PRYSM_RELEASE}-alpha.1-linux-amd64"
+PRYSM_BC_BIN="/usr/local/bin/beacon-chain"
+
+curl -o $PRYSM_BC_BIN $PRYSM_RELEASE_URL
+chmod a+x $PRYSM_BC_BIN
+
+cat > /etc/systemd/system/prysm_beacon-chain.service <<EOF
+[Unit]
+Description=ETH2 Prysm cli
+# Requires=new dependency
+# After=new dependency
+
+[Service]
+Type=simple
+ExecStart=$PRYSM_BC_BIN --accept-terms-of-use \
+  --datadir=${DATADIR}/${ETHEREUM_NETWORK}/prysm \
+  --${ETHEREUM_NETWORK} \
+  --execution-endpoint=http://localhost:8551 \
+  --jwt-secret=holesky/jwt.hex \
+  --log-file=${DATADIR}/${ETHEREUM_NETWORK}/prysm.log
+  --checkpoint-sync-url=https://holesky.beaconstate.ethstaker.cc/
+
+[Install]
+WantedBy=default.target
+EOF
+
+# systemctl --user enable /root/geth.service
+# systemctl --user start geth.service
+
+
