@@ -5,7 +5,7 @@ yum update -y
 
 DATA_DIR="/data"
 DATA_VOL_SERIAL="$(printf ${data_volume_id} | sed 's/vol-/vol/')"
-DATA_VOL_DEVICE="/dev/$(printf ${data_volume_id} | sed 's/vol-/vol/' | awk '{print($1)}')"
+DATA_VOL_DEVICE="/dev/$(lsblk -o +SERIAL $DATA_VOL_SERIAL | grep $DATA_VOL_SERIAL | awk '{print($1)}')"
 
 mkdir -p $DATA_DIR
 while ! lsblk -o +SERIAL|grep $DATA_VOL_SERIAL ; do
