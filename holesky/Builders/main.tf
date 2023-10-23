@@ -80,7 +80,7 @@ module "builder_instances" {
   user_data_replace_on_change = true     #! Re-create the instance if user_data changed, which is when new release deployed
   user_data_base64 = base64encode(templatefile("files/user_data.sh.tftpl", {
     ethereum_network = local.ethereum_network
-    builder_release  = local.builder_release
+    builder_release  = var.builder_release
   }))
 
   root_block_device = [
