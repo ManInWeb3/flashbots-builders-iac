@@ -86,6 +86,7 @@ module "builder_instances" {
   user_data_base64 = base64encode(<<-EOT
     #!/bin/bash
     echo "Hello Terraform!"
+    echo "Hello Terraform!!!!"
   EOT
   )
 
