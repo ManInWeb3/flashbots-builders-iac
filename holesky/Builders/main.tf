@@ -83,6 +83,7 @@ module "builder_instances" {
   user_data_base64 = base64encode(templatefile("files/user_data.sh.tftpl", {
     ethereum_network = local.ethereum_network
     builder_release  = var.builder_release
+    data_volume_device = local.data_volume_device
   }))
 
   root_block_device = [
@@ -118,5 +119,5 @@ resource "aws_volume_attachment" "data" {
 
   volume_id   = aws_ebs_volume.data[each.key].id
   instance_id = module.builder_instances[each.key].id
-  device_name = "/dev/sdh"
+  device_name = local.data_volume_device
 }

@@ -37,7 +37,7 @@ locals {
   # EOT
 
 
-
+  data_volume_device = "/dev/sdh"
   tags = {
     Component   = "builder"
     Environment = local.ethereum_network

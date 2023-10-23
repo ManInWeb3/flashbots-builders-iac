@@ -10,7 +10,7 @@ PRYSM_RELEASE="v4.1.0"
 PRYSM_RELEASE_URL="https://github.com/prysmaticlabs/prysm/releases/download/$PRYSM_RELEASE/beacon-chain-$PRYSM_RELEASE-alpha.1-linux-amd64"
 PRYSM_BC_BIN="/usr/local/bin/beacon-chain"
 
-curl -o $PRYSM_BC_BIN $PRYSM_RELEASE_URL
+curl -Lo $PRYSM_BC_BIN $PRYSM_RELEASE_URL
 chmod a+x $PRYSM_BC_BIN
 
 cat > /etc/systemd/system/prysm_beacon-chain.service <<EOF
@@ -33,6 +33,15 @@ ExecStart=$PRYSM_BC_BIN --accept-terms-of-use \
 WantedBy=default.target
 EOF
 
+lsblk
+
+while [ ! -e "${data_volume_device}" ] ; do
+  echo "Waiting for ${data_volume_device} ..."
+  sleep 2
+done
+
+lsblk
+# echo "11111111111" > $DATADIR/ttttt
 # systemctl --user enable /root/geth.service
 # systemctl --user start geth.service
 
