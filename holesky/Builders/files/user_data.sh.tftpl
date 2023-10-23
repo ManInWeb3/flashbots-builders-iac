@@ -2,13 +2,12 @@
 # Updating the system
 yum update -y
 
-ETHEREUM_NETWORK="${ethereum_network}"
 DATADIR="/data"
 
 BUILDER_RELEASE="${builder_release}"
 
 PRYSM_RELEASE="v4.1.0"
-PRYSM_RELEASE_URL="https://github.com/prysmaticlabs/prysm/releases/download/${PRYSM_RELEASE}/beacon-chain-${PRYSM_RELEASE}-alpha.1-linux-amd64"
+PRYSM_RELEASE_URL="https://github.com/prysmaticlabs/prysm/releases/download/$PRYSM_RELEASE/beacon-chain-$PRYSM_RELEASE-alpha.1-linux-amd64"
 PRYSM_BC_BIN="/usr/local/bin/beacon-chain"
 
 curl -o $PRYSM_BC_BIN $PRYSM_RELEASE_URL
@@ -23,11 +22,11 @@ Description=ETH2 Prysm cli
 [Service]
 Type=simple
 ExecStart=$PRYSM_BC_BIN --accept-terms-of-use \
-  --datadir=${DATADIR}/${ETHEREUM_NETWORK}/prysm \
-  --${ETHEREUM_NETWORK} \
+  --datadir=$DATADIR/${ethereum_network}/prysm \
+  --${ethereum_network} \
   --execution-endpoint=http://localhost:8551 \
   --jwt-secret=holesky/jwt.hex \
-  --log-file=${DATADIR}/${ETHEREUM_NETWORK}/prysm.log
+  --log-file=$DATADIR/${ethereum_network}/prysm.log
   --checkpoint-sync-url=https://holesky.beaconstate.ethstaker.cc/
 
 [Install]
