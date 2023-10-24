@@ -3,13 +3,13 @@ data "aws_subnet" "this" {
   id = each.value.subnet_id
 }
 
-data "aws_ami" "amazon_linux_2023" {
+data "aws_ami" "ubuntu2204" {
   most_recent = true
   owners      = ["amazon"]
 
   filter {
     name   = "name"
-    values = ["al2023-ami-2023*-x86_64"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-*"]
   }
 }
 
@@ -76,7 +76,7 @@ module "builder_instances" {
   for_each = local.builder_instances
 
   name                   = each.key
-  ami                    = data.aws_ami.amazon_linux_2023.id
+  ami                    = data.aws_ami.ubuntu2204.id
   instance_type          = local.builders_instance_type
   availability_zone      = data.aws_subnet.this[each.key].availability_zone
   subnet_id              = each.value.subnet_id
@@ -93,7 +93,7 @@ module "builder_instances" {
   user_data_replace_on_change = true     #! Re-create the instance if user_data changed, which is when new release deployed
   user_data_base64 = base64encode(templatefile("files/user_data.sh.tftpl", {
     ethereum_network = local.ethereum_network
-    builder_release  = var.builder_release
+    builder_release  = local.builder_release
     data_volume_id = aws_ebs_volume.data[each.key].id
   }))
 

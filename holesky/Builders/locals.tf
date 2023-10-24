@@ -1,15 +1,18 @@
 
 #* DEPENDENCIES:
 #*  1. Secret key created and specified ...
+#*  2. Builder release specified
 
 
 locals {
-  region = "us-east-1"
-  ethereum_network = "holesky"
+  #* BUILDER release to deploy
+  #* For example: v1.13.2-4844.dev5.c786eb74f
+  builder_release ="v1.13.2-4844.dev5.c786eb74f"
 
-  vpc_id = "vpc-0aa923abc5e9486b0"
-  # vpc_name     = "${local.ethereum_network}-builders-vpc"
-  # subnets_name_preffix = "${local.ethereum_network}-builders-vpc-private-"   #* Subnets name without AZ name
+  ethereum_network = "holesky"
+  region           = "us-east-1"
+  vpc_id           = "vpc-0aa923abc5e9486b0"
+
   builder_instances = {
     "builder-111_333" = {
       # availability_zone = "us-east-1a"
@@ -21,23 +24,16 @@ locals {
     # },
 
   }
+
+  # Commont Builders settings
+  builders_instance_type = "t3.micro"
+  root_volume_size       = 20
+  data_volume_size       = 10
+
   # Security groups
   ssm_security_group_id      = "sg-039ec2c1a094dfb1d"
   builders_security_group_id = ["sg-0b585ec7a7c290e96"]
 
-  # Commont Builders settings
-  builders_instance_type     = "t3.micro"
-  # availability_zone = element(module.vpc.azs, 0)
-  # subnet_id         = element(module.vpc.private_subnets, 0)
-  root_volume_size = 20
-  data_volume_size = 10
-  # user_data = <<-EOT
-  #   #!/bin/bash
-  #   echo "Hello Terraform!"
-  # EOT
-
-
-  data_volume_device = "/dev/sdh"
   tags = {
     Component   = "builder"
     Environment = local.ethereum_network
