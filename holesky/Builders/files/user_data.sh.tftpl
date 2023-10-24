@@ -18,7 +18,7 @@ while ! lsblk -o +SERIAL|grep $DATA_VOL_SERIAL ; do
 done
 
 ##* Format data disk if not formatted
-if ! blkid $DATA_VOL_DEVICE $DATA_DIR|grep 'TYPE="xfs"'; then
+if ! blkid $DATA_VOL_DEVICE | grep 'TYPE="xfs"'; then
   mkfs.xfs $DATA_VOL_DEVICE
 fi
 ##* Mount data disk
