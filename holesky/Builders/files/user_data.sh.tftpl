@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Updating the system
-yum update -y
+apt update -y dist-upgrade
 
 DATA_DIR="/data"
 DATA_VOL_SERIAL="$(printf ${data_volume_id} | sed 's/vol-/vol/')"
@@ -26,14 +26,13 @@ BUILDER_JWT_PATH="$DATA_DIR/${ethereum_network}/jwt.hex"
 
 BUILDER_RELEASE_URL="https://github.com/ManInWeb3/flashbots-builder/releases/download/$${BUILDER_RELEASE}/builder_$${BUILDER_RELEASE:1}_linux_amd64.tar.gz"
 BUILDER_BIN="/usr/local/bin/builder"
-BUILDER_SYSTEMD_SERVICE="$DATA_DIR/builder.service"
 
 #* Download and install BUILDER
 ARCHIVE="/tmp/builder.tar.gz"
 curl -Lo $ARCHIVE $BUILDER_RELEASE_URL
 tar xzvf $ARCHIVE -C $(dirname $BUILDER_BIN) $(basename $BUILDER_BIN)
-rm $ARCHIVE
-chmod a+x $BUILDER_BC_BIN
+# rm $ARCHIVE
+# chmod a+x $BUILDER_BIN
 
 #* Create user to run the services
 adduser --no-create-home --system $BUILDER_USR
@@ -46,13 +45,15 @@ chmod a+x $BUILDER_BIN
 #* Create required folders
 mkdir -p $DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN)
 
+
 #* Create systemd service file
+BUILDER_SYSTEMD_SERVICE="$DATA_DIR/builder.service"
 cat > $BUILDER_SYSTEMD_SERVICE <<EOF
 [Unit]
 Description=BUILDER cli
 # Requires=new dependency
 # After=new dependency
-After=network.target #geth.socket
+After=network.target
 # Requires=geth.socket
 
 [Service]
@@ -69,6 +70,9 @@ ExecStart=$BUILDER_BIN --${ethereum_network} \\
 [Install]
 WantedBy=default.target
 EOF
+
+systemctl enable $BUILDER_SYSTEMD_SERVICE
+systemctl --user start geth.service
 
 ##* Confiugre Prysm
 PRYSM_RELEASE="v4.1.0"
@@ -107,5 +111,5 @@ WantedBy=default.target
 EOF
 
 # echo "11111111111" > $DATA_DIR/ttttt
-# systemctl --user enable /root/geth.service
+# systemctl --user enable $BUILDER_SYSTEMD_SERVICE $PRYSM_BC_SYSTEMD_SERVICE
 # systemctl --user start geth.service
