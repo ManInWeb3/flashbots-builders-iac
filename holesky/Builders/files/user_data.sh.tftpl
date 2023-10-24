@@ -60,6 +60,13 @@ After=network.target
 [Service]
 Type=simple
 User=$BUILDER_USR
+
+Restart=always
+RestartSec=30
+KillMode=process
+TimeoutStartSec=120 # To give time to start
+TimeoutStopSec=120  # To avoid db corruption
+
 WorkingDirectory=$DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN)
 Environment="BUILDER_TX_SIGNING_KEY=$(aws secretsmanager get-secret-value --region ${aws_region} --secret-id ${builder_name}|jq -r .SecretString)"
 #! Add  --cache=256 to decrease cache size if on small RAM machine
@@ -105,6 +112,13 @@ Requires=$(basename $BUILDER_SYSTEMD_SERVICE)
 [Service]
 Type=simple
 User=$BUILDER_USR
+
+Restart=always
+RestartSec=30
+KillMode=process
+TimeoutStartSec=120 # To give time to start
+TimeoutStopSec=120  # To avoid db corruption
+
 WorkingDirectory=$DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN)
 ExecStart=$PRYSM_BC_BIN --accept-terms-of-use \\
             --datadir=$DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN) \\
