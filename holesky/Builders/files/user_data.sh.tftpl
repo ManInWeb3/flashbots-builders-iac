@@ -31,20 +31,16 @@ BUILDER_BIN="/usr/local/bin/builder"
 ARCHIVE="/tmp/builder.tar.gz"
 curl -Lo $ARCHIVE $BUILDER_RELEASE_URL
 tar xzvf $ARCHIVE -C $(dirname $BUILDER_BIN) $(basename $BUILDER_BIN)
-# rm $ARCHIVE
-# chmod a+x $BUILDER_BIN
+rm $ARCHIVE
+chmod a+x $BUILDER_BIN
 
 #* Create user to run the services
 adduser --no-create-home --system $BUILDER_USR
-
-curl -Lo $BUILDER_BIN $BUILDER_RELEASE_URL
-chmod a+x $BUILDER_BIN
 
 ##* Configure BUILDER
 
 #* Create required folders
 mkdir -p $DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN)
-
 
 #* Create systemd service file
 BUILDER_SYSTEMD_SERVICE="$DATA_DIR/builder.service"
@@ -72,14 +68,13 @@ WantedBy=default.target
 EOF
 
 systemctl enable $BUILDER_SYSTEMD_SERVICE
-systemctl --user start geth.service
+systemctl --user start $(basename $BUILDER_SYSTEMD_SERVICE)
 
 ##* Confiugre Prysm
 PRYSM_RELEASE="v4.1.0"
 PRYSM_RELEASE_URL="https://github.com/prysmaticlabs/prysm/releases/download/$PRYSM_RELEASE/beacon-chain-$PRYSM_RELEASE-alpha.1-linux-amd64"
-PRYSM_BC_BIN="/usr/local/bin/beacon-chain"
-PRYSM_BC_SYSTEMD_SERVICE="$DATA_DIR/prysm_beacon-chain.service"
 
+PRYSM_BC_BIN="/usr/local/bin/beacon-chain"
 curl -Lo $PRYSM_BC_BIN $PRYSM_RELEASE_URL
 chmod a+x $PRYSM_BC_BIN
 
@@ -87,13 +82,15 @@ chmod a+x $PRYSM_BC_BIN
 mkdir -p $DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN)
 
 #* Create PRYSM beacon-chain systemd service file
+PRYSM_BC_SYSTEMD_SERVICE="$DATA_DIR/prysm_beacon-chain.service"
+
 cat > $PRYSM_BC_SYSTEMD_SERVICE <<EOF
 [Unit]
 Description=ETH2 Prysm cli
 # Requires=new dependency
 # After=new dependency
-After=network.target #geth.socket
-# Requires=geth.socket
+After=network.target $(basename $PRYSM_BC_SYSTEMD_SERVICE)
+Requires=$(basename $PRYSM_BC_SYSTEMD_SERVICE)
 
 [Service]
 Type=simple
@@ -110,6 +107,7 @@ ExecStart=$PRYSM_BC_BIN --accept-terms-of-use \\
 WantedBy=default.target
 EOF
 
-# echo "11111111111" > $DATA_DIR/ttttt
+systemctl enable $PRYSM_BC_SYSTEMD_SERVICE
+systemctl --user start $(basename $PRYSM_BC_SYSTEMD_SERVICE)
 # systemctl --user enable $BUILDER_SYSTEMD_SERVICE $PRYSM_BC_SYSTEMD_SERVICE
 # systemctl --user start geth.service
