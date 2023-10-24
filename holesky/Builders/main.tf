@@ -58,9 +58,7 @@ module "builder_security_group" {
   # ]
 
   egress_rules = [
-    {
-      rule = "all-all"
-    },
+    "all-all",
   ]
   tags = local.tags
 }
