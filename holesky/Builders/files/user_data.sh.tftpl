@@ -68,7 +68,7 @@ ExecStart=$BUILDER_BIN --${ethereum_network} \\
             --cache=256 \\
             --datadir=$DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN) \\
             --http --http.api eth,net,engine,admin \\
-            --log.file=$DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN).log \\
+            --log.file=$DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN)_$BUILDER_RELEASE.log \\
             --builder \\
             --builder.local_relay \\
             --builder.beacon_endpoints=http://127.0.0.1:3500
@@ -112,7 +112,7 @@ ExecStart=$PRYSM_BC_BIN --accept-terms-of-use \\
             --genesis-state=$HOLESKY_GENESIS \\
             --execution-endpoint=http://localhost:8551 \\
             --jwt-secret=$BUILDER_JWT_PATH \\
-            --log-file=$DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN).log \\
+            --log-file=$DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN)_$PRYSM_RELEASE.log \\
             --checkpoint-sync-url=$HOLESKY_CHECKPOINT_SYNC_URL
 
 [Install]
