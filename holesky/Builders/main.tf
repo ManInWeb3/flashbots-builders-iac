@@ -3,6 +3,16 @@ data "aws_subnet" "this" {
   id = each.value.subnet_id
 }
 
+data "aws_ami" "amazon_linux_2023" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-2023*-x86_64"]
+  }
+}
+
 resource "aws_ebs_volume" "data" {
   for_each = local.builder_instances
 
@@ -66,6 +76,7 @@ module "builder_instances" {
   for_each = local.builder_instances
 
   name                   = each.key
+  ami                    = data.aws_ami.amazon_linux_2023.id
   instance_type          = local.builders_instance_type
   availability_zone      = data.aws_subnet.this[each.key].availability_zone
   subnet_id              = each.value.subnet_id
