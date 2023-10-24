@@ -134,12 +134,15 @@ WantedBy=default.target
 EOF
 
 #* Set permissions on the data dir
-chown -R $BUILDER_USR:ssm-user $DATA_DIR
+###! ssm-user group created by ssm agent and it takes time so need to wait
+for i in $(seq 1 10); do
+  chown -R $BUILDER_USR:ssm-user $DATA_DIR && break || echo "$i: Waiting when SSM agent synced"
+  sleep 1
+done
 
-#* Starting services
-
+#* Enabling and Starting services
 systemctl enable $BUILDER_SYSTEMD_SERVICE
-# systemctl start $(basename $BUILDER_SYSTEMD_SERVICE)
+systemctl start $(basename $BUILDER_SYSTEMD_SERVICE)
 
 systemctl enable $PRYSM_BC_SYSTEMD_SERVICE
-# systemctl start $(basename $PRYSM_BC_SYSTEMD_SERVICE)
+systemctl start $(basename $PRYSM_BC_SYSTEMD_SERVICE)
