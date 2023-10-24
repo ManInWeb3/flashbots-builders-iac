@@ -119,7 +119,9 @@ module "builder_instances" {
   user_data_base64 = base64encode(templatefile("files/user_data.sh.tftpl", {
     ethereum_network = local.ethereum_network
     builder_release  = local.builder_release
-    data_volume_id = aws_ebs_volume.data[each.key].id
+    builder_name     = each.key
+    data_volume_id   = aws_ebs_volume.data[each.key].id
+    aws_region       = local.region
   }))
 
   root_block_device = [
@@ -139,7 +141,7 @@ module "builder_instances" {
 
   tags = merge(
     {
-      "Builder_Key" = each.key,
+      "BUILDER_TX_SIGNING_KEY_SECRET_NAME" = each.key,
     },
     local.tags
   )

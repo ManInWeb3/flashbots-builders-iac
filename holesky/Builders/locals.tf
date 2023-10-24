@@ -15,7 +15,6 @@ locals {
 
   builder_instances = {
     "builder-111_333" = {
-      # availability_zone = "us-east-1a"
       subnet_id  = "subnet-0b8d187f0c60263f5"
       key_id            = "111dsfsdfsdfsd333"
     },
