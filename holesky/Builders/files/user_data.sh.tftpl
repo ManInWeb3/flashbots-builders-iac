@@ -20,23 +20,67 @@ fi
 #* Mount data disk
 mount $DATA_VOL_DEVICE $DATA_DIR
 
-lsblk
-
 BUILDER_RELEASE="${builder_release}"
 BUILDER_USR="builder"
+BUILDER_JWT_PATH="$DATA_DIR/${ethereum_network}/jwt.hex"
 
+BUILDER_RELEASE_URL="https://github.com/ManInWeb3/flashbots-builder/releases/download/$${BUILDER_RELEASE:1}/builder_$${BUILDER_RELEASE:1}_linux_amd64.tar.gz"
+BUILDER_BIN="/usr/local/bin/builder"
+BUILDER_SYSTEMD_SERVICE="$DATA_DIR/builder.service"
+
+#* Download and install BUILDER
+ARCHIVE="/tmp/builder.tar.gz"
+curl -Lo $ARCHIVE $BUILDER_RELEASE_URL
+tar xzvf $ARCHIVE -C $(dirname $BUILDER_BIN) $(basename $BUILDER_BIN)
+rm $ARCHIVE
+chmod a+x $BUILDER_BC_BIN
+
+#* Create user to run the services
+adduser --no-create-home --system $BUILDER_USR
+
+curl -Lo $BUILDER_BIN $BUILDER_RELEASE_URL
+chmod a+x $BUILDER_BIN
+
+##* Configure BUILDER
+
+#* Create required folders
+mkdir -p $DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN)
+
+#* Create systemd service file
+cat > $BUILDER_SYSTEMD_SERVICE <<EOF
+[Unit]
+Description=BUILDER cli
+# Requires=new dependency
+# After=new dependency
+After=network.target #geth.socket
+# Requires=geth.socket
+
+[Service]
+Type=simple
+User=$BUILDER_USR
+ExecStart=$BUILDER_BIN --${ethereum_network} \\
+            --authrpc.jwtsecret=$BUILDER_JWT_PATH \\
+            --datadir=$DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN) \\
+            --http --http.api eth,net,engine,admin \\
+            --builder \\
+            --builder.local_relay \\
+            --builder.beacon_endpoints=http://127.0.0.1:3500
+
+[Install]
+WantedBy=default.target
+EOF
+
+##* Confiugre Prysm
 PRYSM_RELEASE="v4.1.0"
 PRYSM_RELEASE_URL="https://github.com/prysmaticlabs/prysm/releases/download/$PRYSM_RELEASE/beacon-chain-$PRYSM_RELEASE-alpha.1-linux-amd64"
 PRYSM_BC_BIN="/usr/local/bin/beacon-chain"
 PRYSM_BC_SYSTEMD_SERVICE="$DATA_DIR/prysm_beacon-chain.service"
 
-JWT_PATH="$DATA_DIR/${ethereum_network}/jwt.hex"
-
 curl -Lo $PRYSM_BC_BIN $PRYSM_RELEASE_URL
 chmod a+x $PRYSM_BC_BIN
 
-#* Create user to run the services
-adduser --no-create-home --system $BUILDER_USR
+#* Create required folders
+mkdir -p $DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN)
 
 #* Create systemd service file
 cat > $PRYSM_BC_SYSTEMD_SERVICE <<EOF
@@ -54,7 +98,7 @@ ExecStart=$PRYSM_BC_BIN --accept-terms-of-use \\
             --DATA_DIR=$DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN) \\
             --${ethereum_network} \\
             --execution-endpoint=http://localhost:8551 \\
-            --jwt-secret=$JWT_PATH \\
+            --jwt-secret=$BUILDER_JWT_PATH \\
             --log-file=$DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN).log \\
             --checkpoint-sync-url=https://holesky.beaconstate.ethstaker.cc/
 
