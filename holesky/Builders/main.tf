@@ -69,6 +69,30 @@ module "builder_security_group" {
   tags = local.tags
 }
 
+# Secret-manager IAM policy
+resource "aws_iam_policy" "get_secret" {
+  for_each = local.builder_instances
+
+  name                   = each.key
+  path        = "/"
+  description = "Policy to access secrets"
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetSecretValue"
+            ],
+            "Resource": [
+                "arn:aws:secretsmanager:us-east-1:075125828640:secret:test_key-64px7P"
+            ]
+        }
+    ]
+})
+}
+
 module "builder_instances" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = ">= 5.5.0, < 6.0.0"
@@ -107,9 +131,10 @@ module "builder_instances" {
 
   #* SSM Session Manager
   create_iam_instance_profile = true
-  iam_role_description        = "IAM role for EC2 instance"
+  iam_role_description        = "IAM role for Builders EC2 instance"
   iam_role_policies = {
     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+    aws_iam_policy.get_secret[each.key].name = aws_iam_policy.get_secret[each.key].arn
   }
 
   tags = merge(
