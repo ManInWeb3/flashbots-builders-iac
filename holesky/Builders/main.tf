@@ -39,23 +39,30 @@ module "builder_security_group" {
 
   vpc_id = local.vpc_id
 
-  #   #! OPTIONAL p2p ports
-  # ingress_with_cidr_blocks = [
-  #   {
-  #     from_port     = 30303
-  #     to_port     = 30303
-  #     protocol    = "tcp"
-  #     description = "Geth P2P tcp"
-  #     cidr_blocks = "0.0.0.0/0"
-  #   },
-  #   {
-  #     from_port     = 30303
-  #     to_port     = 30303
-  #     protocol    = "udp"
-  #     description = "Geth P2P udp"
-  #     cidr_blocks = "0.0.0.0/0"
-  #   },
-  # ]
+    #! OPTIONAL p2p ports
+  ingress_with_cidr_blocks = [
+    {
+      from_port     = 22
+      to_port     = 22
+      protocol    = "tcp"
+      description = "SSH from vlad"
+      cidr_blocks = "121.98.71.217/32"
+    },
+    # {
+    #   from_port     = 30303
+    #   to_port     = 30303
+    #   protocol    = "tcp"
+    #   description = "Geth P2P tcp"
+    #   cidr_blocks = "0.0.0.0/0"
+    # },
+    # {
+    #   from_port     = 30303
+    #   to_port     = 30303
+    #   protocol    = "udp"
+    #   description = "Geth P2P udp"
+    #   cidr_blocks = "0.0.0.0/0"
+    # },
+  ]
 
   egress_rules = ["all-all"]
 
@@ -69,6 +76,7 @@ module "builder_instances" {
   for_each = local.builder_instances
 
   name                   = each.key
+  key_name = "vlad"                                                           
   ami                    = data.aws_ami.ubuntu2204.id
   instance_type          = local.builders_instance_type
   availability_zone      = data.aws_subnet.this[each.key].availability_zone
@@ -93,7 +101,6 @@ module "builder_instances" {
   root_block_device = [
     {
       encrypted   = true
-      volume_type = "gp3"
       volume_size = local.root_volume_size
     },
   ]
