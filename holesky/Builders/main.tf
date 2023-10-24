@@ -39,33 +39,29 @@ module "builder_security_group" {
 
   vpc_id = local.vpc_id
 
-  ingress_with_cidr_blocks = [
-    #! OPTIONAL p2p ports
-    {
-      from_port     = 30303
-      to_port     = 30303
-      protocol    = "tcp"
-      description = "Geth P2P tcp"
-      cidr_blocks = "0.0.0.0/0"
-    },
-    {
-      from_port     = 30303
-      to_port     = 30303
-      protocol    = "udp"
-      description = "Geth P2P udp"
-      cidr_blocks = "0.0.0.0/0"
-    },
-  ]
-  egress_with_cidr_blocks = [
-    { #* Required for SSM session manager
-      from_port   = 443
-      to_port     = 443
-      protocol    = "tcp"
-      description = "HTTPS to all"
-      cidr_blocks = "0.0.0.0/0"
-    },
-  ]
+  #   #! OPTIONAL p2p ports
+  # ingress_with_cidr_blocks = [
+  #   {
+  #     from_port     = 30303
+  #     to_port     = 30303
+  #     protocol    = "tcp"
+  #     description = "Geth P2P tcp"
+  #     cidr_blocks = "0.0.0.0/0"
+  #   },
+  #   {
+  #     from_port     = 30303
+  #     to_port     = 30303
+  #     protocol    = "udp"
+  #     description = "Geth P2P udp"
+  #     cidr_blocks = "0.0.0.0/0"
+  #   },
+  # ]
 
+  egress_rules = [
+    {
+      rule = "all-all"
+    },
+  ]
   tags = local.tags
 }
 

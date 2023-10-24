@@ -30,7 +30,7 @@ swapon --show
 #* Create user to run the services
 BUILDER_USR="builder"
 adduser --no-create-home --system $BUILDER_USR
-chown -R $BUILDER_USR $DATA_DIR
+chown -R $BUILDER_USR:ssm-user $DATA_DIR
 
 BUILDER_RELEASE="${builder_release}"
 
@@ -64,9 +64,10 @@ After=network.target
 Type=simple
 User=$BUILDER_USR
 WorkingDirectory=$DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN)
+#! Add  --cache=256 to decrease cache size if on small RAM machine
 ExecStart=$BUILDER_BIN --${ethereum_network} \\
             --authrpc.jwtsecret=$BUILDER_JWT_PATH \\
-            --cache 512 \\   # Only on small RAM machine
+            --cache=256 \\
             --datadir=$DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN) \\
             --http --http.api eth,net,engine,admin \\
             --log.file=$DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN).log \\
@@ -79,7 +80,7 @@ WantedBy=default.target
 EOF
 
 systemctl enable $BUILDER_SYSTEMD_SERVICE
-systemctl start $(basename $BUILDER_SYSTEMD_SERVICE)
+# systemctl start $(basename $BUILDER_SYSTEMD_SERVICE)
 
 ##* Confiugre Prysm
 PRYSM_RELEASE="v4.1.0"
@@ -91,7 +92,9 @@ chmod a+x $PRYSM_BC_BIN
 
 #* Create required folders
 mkdir -p $DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN)
-
+HOLESKY_GENESIS_URL="https://github.com/eth-clients/holesky/raw/main/custom_config_data/genesis.ssz"
+HOLESKY_GENESIS="$DATA_DIR/${ethereum_network}/genesis.ssz"
+curl -Lo $HOLESKY_GENESIS $HOLESKY_GENESIS_URL
 #* Create PRYSM beacon-chain systemd service file
 PRYSM_BC_SYSTEMD_SERVICE="$DATA_DIR/prysm_beacon-chain.service"
 
@@ -110,6 +113,7 @@ WorkingDirectory=$DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN)
 ExecStart=$PRYSM_BC_BIN --accept-terms-of-use \\
             --datadir=$DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN) \\
             --${ethereum_network} \\
+            --genesis-state=$HOLESKY_GENESIS \\
             --execution-endpoint=http://localhost:8551 \\
             --jwt-secret=$BUILDER_JWT_PATH \\
             --log-file=$DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN).log \\
@@ -120,4 +124,4 @@ WantedBy=default.target
 EOF
 
 systemctl enable $PRYSM_BC_SYSTEMD_SERVICE
-systemctl start $(basename $PRYSM_BC_SYSTEMD_SERVICE)
+# systemctl start $(basename $PRYSM_BC_SYSTEMD_SERVICE)
