@@ -70,6 +70,11 @@ module "builder_security_group" {
 }
 
 # Secret-manager IAM policy
+data "aws_secretsmanager_secret" "secret" {
+  for_each = local.builder_instances
+  name     = each.key
+}
+
 resource "aws_iam_policy" "get_secret" {
   for_each = local.builder_instances
 
@@ -85,13 +90,13 @@ resource "aws_iam_policy" "get_secret" {
             "Action": [
                 "secretsmanager:GetSecretValue"
             ],
-            "Resource": [
-                "arn:aws:secretsmanager:us-east-1:075125828640:secret:test_key-64px7P"
-            ]
+            "Resource": [data.aws_secretsmanager_secret.secret[each.key].arn]
         }
     ]
 })
 }
+            #     "arn:aws:secretsmanager:us-east-1:075125828640:secret:test_key-64px7P"
+            # ]
 
 module "builder_instances" {
   source  = "terraform-aws-modules/ec2-instance/aws"
