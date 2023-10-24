@@ -130,5 +130,5 @@ resource "aws_volume_attachment" "data" {
 
   volume_id   = aws_ebs_volume.data[each.key].id
   instance_id = module.builder_instances[each.key].id
-  device_name = local.data_volume_device
+  # device_name = local.data_volume_device
 }
