@@ -55,6 +55,7 @@ After=network.target
 [Service]
 Type=simple
 User=$BUILDER_USR
+WorkingDirectory=$DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN)
 ExecStart=$BUILDER_BIN --${ethereum_network} \\
             --authrpc.jwtsecret=$BUILDER_JWT_PATH \\
             --datadir=$DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN) \\
@@ -67,8 +68,8 @@ ExecStart=$BUILDER_BIN --${ethereum_network} \\
 WantedBy=default.target
 EOF
 
-systemctl enable $BUILDER_SYSTEMD_SERVICE
-systemctl --user start $(basename $BUILDER_SYSTEMD_SERVICE)
+# systemctl enable $BUILDER_SYSTEMD_SERVICE
+# systemctl --user start $(basename $BUILDER_SYSTEMD_SERVICE)
 
 ##* Confiugre Prysm
 PRYSM_RELEASE="v4.1.0"
@@ -95,6 +96,7 @@ Requires=$(basename $PRYSM_BC_SYSTEMD_SERVICE)
 [Service]
 Type=simple
 User=$BUILDER_USR
+WorkingDirectory=$DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN)
 ExecStart=$PRYSM_BC_BIN --accept-terms-of-use \\
             --DATA_DIR=$DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN) \\
             --${ethereum_network} \\
@@ -107,7 +109,5 @@ ExecStart=$PRYSM_BC_BIN --accept-terms-of-use \\
 WantedBy=default.target
 EOF
 
-systemctl enable $PRYSM_BC_SYSTEMD_SERVICE
-systemctl --user start $(basename $PRYSM_BC_SYSTEMD_SERVICE)
-# systemctl --user enable $BUILDER_SYSTEMD_SERVICE $PRYSM_BC_SYSTEMD_SERVICE
-# systemctl --user start geth.service
+# systemctl enable $PRYSM_BC_SYSTEMD_SERVICE
+# systemctl --user start $(basename $PRYSM_BC_SYSTEMD_SERVICE)
