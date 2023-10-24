@@ -20,9 +20,19 @@ fi
 #* Mount data disk
 mount $DATA_VOL_DEVICE $DATA_DIR
 
-BUILDER_RELEASE="${builder_release}"
+#! Due to t3 is has just 1G of RAM add swap
+fallocate -l 4G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+swapon --show
+
+#* Create user to run the services
 BUILDER_USR="builder"
-BUILDER_JWT_PATH="$DATA_DIR/${ethereum_network}/jwt.hex"
+adduser --no-create-home --system $BUILDER_USR
+chown -R $BUILDER_USR $DATA_DIR
+
+BUILDER_RELEASE="${builder_release}"
 
 BUILDER_RELEASE_URL="https://github.com/ManInWeb3/flashbots-builder/releases/download/$${BUILDER_RELEASE}/builder_$${BUILDER_RELEASE:1}_linux_amd64.tar.gz"
 BUILDER_BIN="/usr/local/bin/builder"
@@ -34,13 +44,11 @@ tar xzvf $ARCHIVE -C $(dirname $BUILDER_BIN) $(basename $BUILDER_BIN)
 rm $ARCHIVE
 chmod a+x $BUILDER_BIN
 
-#* Create user to run the services
-adduser --no-create-home --system $BUILDER_USR
-
 ##* Configure BUILDER
 
 #* Create required folders
 mkdir -p $DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN)
+BUILDER_JWT_PATH="$DATA_DIR/${ethereum_network}/jwt.hex"
 
 #* Create systemd service file
 BUILDER_SYSTEMD_SERVICE="$DATA_DIR/builder.service"
@@ -58,8 +66,10 @@ User=$BUILDER_USR
 WorkingDirectory=$DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN)
 ExecStart=$BUILDER_BIN --${ethereum_network} \\
             --authrpc.jwtsecret=$BUILDER_JWT_PATH \\
+            --cache 512 \\   # Only on small RAM machine
             --datadir=$DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN) \\
             --http --http.api eth,net,engine,admin \\
+            --log.file=$DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN).log \\
             --builder \\
             --builder.local_relay \\
             --builder.beacon_endpoints=http://127.0.0.1:3500
@@ -68,8 +78,8 @@ ExecStart=$BUILDER_BIN --${ethereum_network} \\
 WantedBy=default.target
 EOF
 
-# systemctl enable $BUILDER_SYSTEMD_SERVICE
-# systemctl --user start $(basename $BUILDER_SYSTEMD_SERVICE)
+systemctl enable $BUILDER_SYSTEMD_SERVICE
+systemctl start $(basename $BUILDER_SYSTEMD_SERVICE)
 
 ##* Confiugre Prysm
 PRYSM_RELEASE="v4.1.0"
@@ -90,15 +100,15 @@ cat > $PRYSM_BC_SYSTEMD_SERVICE <<EOF
 Description=ETH2 Prysm cli
 # Requires=new dependency
 # After=new dependency
-After=network.target $(basename $PRYSM_BC_SYSTEMD_SERVICE)
-Requires=$(basename $PRYSM_BC_SYSTEMD_SERVICE)
+After=network.target
+Requires=$(basename $BUILDER_SYSTEMD_SERVICE)
 
 [Service]
 Type=simple
 User=$BUILDER_USR
 WorkingDirectory=$DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN)
 ExecStart=$PRYSM_BC_BIN --accept-terms-of-use \\
-            --DATA_DIR=$DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN) \\
+            --datadir=$DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN) \\
             --${ethereum_network} \\
             --execution-endpoint=http://localhost:8551 \\
             --jwt-secret=$BUILDER_JWT_PATH \\
@@ -109,5 +119,5 @@ ExecStart=$PRYSM_BC_BIN --accept-terms-of-use \\
 WantedBy=default.target
 EOF
 
-# systemctl enable $PRYSM_BC_SYSTEMD_SERVICE
-# systemctl --user start $(basename $PRYSM_BC_SYSTEMD_SERVICE)
+systemctl enable $PRYSM_BC_SYSTEMD_SERVICE
+systemctl start $(basename $PRYSM_BC_SYSTEMD_SERVICE)
