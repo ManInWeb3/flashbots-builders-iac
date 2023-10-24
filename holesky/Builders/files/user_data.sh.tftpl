@@ -82,7 +82,7 @@ chmod a+x $PRYSM_BC_BIN
 #* Create required folders
 mkdir -p $DATA_DIR/${ethereum_network}/$(basename $PRYSM_BC_BIN)
 
-#* Create systemd service file
+#* Create PRYSM beacon-chain systemd service file
 cat > $PRYSM_BC_SYSTEMD_SERVICE <<EOF
 [Unit]
 Description=ETH2 Prysm cli
