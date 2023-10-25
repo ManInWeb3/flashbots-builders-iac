@@ -15,7 +15,6 @@ locals {
 
   builder_instances = {
     "builder-111_333" = {
-      # availability_zone = "us-east-1a"
       subnet_id  = "subnet-0b8d187f0c60263f5"
       key_id            = "111dsfsdfsdfsd333"
     },
@@ -26,7 +25,7 @@ locals {
   }
 
   # Commont Builders settings
-  builders_instance_type = "t3.micro"
+  builders_instance_type = "t3.large"  #"t3.micro"
   root_volume_size       = 20
   data_volume_size       = 10
 

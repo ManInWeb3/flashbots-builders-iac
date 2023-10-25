@@ -39,35 +39,64 @@ module "builder_security_group" {
 
   vpc_id = local.vpc_id
 
-  ingress_with_cidr_blocks = [
     #! OPTIONAL p2p ports
-    {
-      from_port     = 30303
-      to_port     = 30303
-      protocol    = "tcp"
-      description = "Geth P2P tcp"
-      cidr_blocks = "0.0.0.0/0"
-    },
-    {
-      from_port     = 30303
-      to_port     = 30303
-      protocol    = "udp"
-      description = "Geth P2P udp"
-      cidr_blocks = "0.0.0.0/0"
-    },
+  ingress_with_cidr_blocks = [
+    # {
+    #   from_port     = 22
+    #   to_port     = 22
+    #   protocol    = "tcp"
+    #   description = "SSH from vlad"
+    #   cidr_blocks = "121.98.71.217/32"
+    # },
+    # {
+    #   from_port     = 30303
+    #   to_port     = 30303
+    #   protocol    = "tcp"
+    #   description = "Geth P2P tcp"
+    #   cidr_blocks = "0.0.0.0/0"
+    # },
+    # {
+    #   from_port     = 30303
+    #   to_port     = 30303
+    #   protocol    = "udp"
+    #   description = "Geth P2P udp"
+    #   cidr_blocks = "0.0.0.0/0"
+    # },
   ]
-  egress_with_cidr_blocks = [
-    { #* Required for SSM session manager
-      from_port   = 443
-      to_port     = 443
-      protocol    = "tcp"
-      description = "HTTPS to all"
-      cidr_blocks = "0.0.0.0/0"
-    },
-  ]
+
+  egress_rules = ["all-all"]
 
   tags = local.tags
 }
+
+# Secret-manager IAM policy
+data "aws_secretsmanager_secret" "secret" {
+  for_each = local.builder_instances
+  name     = each.key
+}
+
+resource "aws_iam_policy" "get_secret" {
+  for_each = local.builder_instances
+
+  name                   = each.key
+  path        = "/"
+  description = "Policy to access secrets"
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetSecretValue"
+            ],
+            "Resource": [data.aws_secretsmanager_secret.secret[each.key].arn]
+        }
+    ]
+})
+}
+            #     "arn:aws:secretsmanager:us-east-1:075125828640:secret:test_key-64px7P"
+            # ]
 
 module "builder_instances" {
   source  = "terraform-aws-modules/ec2-instance/aws"
@@ -76,6 +105,7 @@ module "builder_instances" {
   for_each = local.builder_instances
 
   name                   = each.key
+  # key_name = "vlad"                                                           
   ami                    = data.aws_ami.ubuntu2204.id
   instance_type          = local.builders_instance_type
   availability_zone      = data.aws_subnet.this[each.key].availability_zone
@@ -94,27 +124,29 @@ module "builder_instances" {
   user_data_base64 = base64encode(templatefile("files/user_data.sh.tftpl", {
     ethereum_network = local.ethereum_network
     builder_release  = local.builder_release
-    data_volume_id = aws_ebs_volume.data[each.key].id
+    builder_name     = each.key
+    data_volume_id   = aws_ebs_volume.data[each.key].id
+    aws_region       = local.region
   }))
 
   root_block_device = [
     {
       encrypted   = true
-      volume_type = "gp3"
       volume_size = local.root_volume_size
     },
   ]
 
   #* SSM Session Manager
   create_iam_instance_profile = true
-  iam_role_description        = "IAM role for EC2 instance"
+  iam_role_description        = "IAM role for Builders EC2 instance"
   iam_role_policies = {
     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+    aws_iam_policy.get_secret[each.key].name = aws_iam_policy.get_secret[each.key].arn
   }
 
   tags = merge(
     {
-      "Builder_Key" = each.key,
+      "BUILDER_TX_SIGNING_KEY_SECRET_NAME" = each.key,
     },
     local.tags
   )
