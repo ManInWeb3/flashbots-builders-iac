@@ -5,10 +5,25 @@
 
 
 locals {
-  #* BUILDER release to deploy
-  #* For example: v1.13.2-4844.dev5.c786eb74f
+  #* BUILDER release to deploy. For example: v1.13.2-4844.dev5.c786eb74f
   builder_release = "v1.13.2-4844.dev5.c786eb74f"
-  prysm_release   = "v4.1.0"
+
+  #* Builder command already have the following arguments auto configured:
+  #* --${local.ethereum_network}
+  #* --authrpc.jwtsecret=$BUILDER_JWT_PATH
+  #* --datadir=$DATA_DIR/${local.ethereum_network}/$(basename $BUILDER_BIN)
+  #* --log.file=$DATA_DIR/${local.ethereum_network}/$(basename $BUILDER_BIN)_$BUILDER_RELEASE.log
+  #* If you need to add arguments, add them in builder_AdditionalArgs list
+  builder_AdditionalArgs = [
+    "--http --http.api eth,net,engine,admin",
+    "--cache=256",
+    "--builder",
+    "--builder.local_relay",
+    "--builder.beacon_endpoints=http://127.0.0.1:3500",
+  ]
+
+  # prysm_release   = null #"v4.1.0"
+  nimbus_release  = "v23.10.0"
 
   ethereum_network = "holesky"
   region           = "us-east-1"
@@ -21,11 +36,10 @@ locals {
     # key_222_333 = {
     #   subnet_id = "dsfsdfsdfsd"
     # },
-
   }
 
   # Commont Builders settings
-  ssh_key_name = "vlad"
+  # ssh_key_name = "vlad"
   builders_instance_type = "t3.medium"  #"t3.micro"
   root_volume_size       = 20
   data_volume_size       = 10

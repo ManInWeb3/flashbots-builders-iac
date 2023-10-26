@@ -2,6 +2,7 @@ module "builders" {
   source  = "../../modules/Builders"
 
   builder_release = local.builder_release
+  builder_AdditionalArgs = local.builder_AdditionalArgsStr
   prysm_release   = local.prysm_release
 
   ethereum_network = local.ethereum_network
