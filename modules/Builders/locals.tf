@@ -29,7 +29,7 @@ locals {
 
   tags = {
     Component   = "builder"
-    Environment = local.ethereum_network
+    Environment = var.ethereum_network
     Team        = "devops@ttt.com"
     GithubRepo = "flashbots-builders-iac"
   }

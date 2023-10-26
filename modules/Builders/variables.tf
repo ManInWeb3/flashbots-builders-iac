@@ -30,7 +30,6 @@ variable "builder_instances" {
   description = ""
   type        = object({
     subnet_id = string
-    key_id    = string
   })
 }
 variable "builders_instance_type" {
