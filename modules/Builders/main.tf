@@ -17,7 +17,7 @@ data "aws_ami" "ubuntu2204" {
 resource "aws_ebs_volume" "data" {
   for_each = var.builder_instances
 
-  availability_zone = data.aws_subnet.this[each.key].availability_zone #lookup(each.value, "availability_zone", null)
+  availability_zone = data.aws_subnet.this[each.key].availability_zone
   size      = var.data_volume_size
   encrypted = true
   type      = "gp3"
@@ -99,7 +99,7 @@ module "builder_instances" {
   associate_public_ip_address = true
   ignore_ami_changes = true              #! Don't re-create instance if newer image found
   user_data_replace_on_change = true     #! Re-create the instance if user_data changed, which is when new release deployed
-  user_data_base64 = base64encode(templatefile("files/user_data.sh.tftpl", {
+  user_data_base64 = base64encode(templatefile("../../modules/Builder/files/user_data.sh.tftpl", {
     ethereum_network = var.ethereum_network
     builder_release  = var.builder_release
     prysm_release    = var.prysm_release
