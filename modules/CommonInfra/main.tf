@@ -13,7 +13,7 @@ module "vpc" {
   cidr = var.vpc_cidr
 
   azs                 = var.azs
-  public_subnets      = [for k, v in local.azs : cidrsubnet(var.vpc_cidr, 8, k + 4)]
+  public_subnets      = [for k, v in var.azs : cidrsubnet(var.vpc_cidr, 8, k + 4)]
 
   tags = local.tags
 
