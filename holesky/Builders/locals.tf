@@ -25,7 +25,7 @@ locals {
   }
 
   # Commont Builders settings
-  builders_instance_type = "t3.large"  #"t3.micro"
+  builders_instance_type = "t3.medium"   #"t3.large"  #"t3.micro"
   root_volume_size       = 20
   data_volume_size       = 10
 
