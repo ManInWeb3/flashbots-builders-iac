@@ -33,11 +33,4 @@ locals {
   ssm_security_group_id      = "sg-039ec2c1a094dfb1d"
   builders_security_group_id = ["sg-0b585ec7a7c290e96"]
 
-  tags = {
-    Component   = "builder"
-    Environment = local.ethereum_network
-    Team        = "devops@ttt.com"
-    GithubRepo = "flashbots-builders-iac"
-  }
-
 }
