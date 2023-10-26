@@ -39,33 +39,9 @@ module "builder_security_group" {
   description = "Builders Security Group"
 
   vpc_id = var.vpc_id
+  ingress_with_cidr_blocks = local.ingress_with_cidr_blocks
 
-    #! OPTIONAL p2p ports
-  ingress_with_cidr_blocks = [
-    # {
-    #   from_port     = 22
-    #   to_port     = 22
-    #   protocol    = "tcp"
-    #   description = "SSH from vlad"
-    #   cidr_blocks = "121.98.71.217/32"
-    # },
-    # {
-    #   from_port     = 30303
-    #   to_port     = 30303
-    #   protocol    = "tcp"
-    #   description = "Geth P2P tcp"
-    #   cidr_blocks = "0.0.0.0/0"
-    # },
-    # {
-    #   from_port     = 30303
-    #   to_port     = 30303
-    #   protocol    = "udp"
-    #   description = "Geth P2P udp"
-    #   cidr_blocks = "0.0.0.0/0"
-    # },
-  ]
-
-  egress_rules = ["all-all"]
+  egress_rules = local.egress_rules
 
   tags = local.tags
 }
@@ -106,14 +82,15 @@ module "builder_instances" {
   for_each = var.builder_instances
 
   name                   = each.key
-  # key_name = "vlad"                                                           
+
   ami                    = data.aws_ami.ubuntu2204.id
   instance_type          = var.builders_instance_type
+  key_name               = var.ssh_key_name
   availability_zone      = data.aws_subnet.this[each.key].availability_zone
   subnet_id              = each.value.subnet_id
   vpc_security_group_ids = [
     module.builder_security_group.security_group_id,
-    var.ssm_security_group_id,
+    var.vpc_endpoints_security_group_id,
   ]
 
   #* External IP to expose p2p

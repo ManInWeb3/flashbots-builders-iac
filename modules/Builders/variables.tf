@@ -42,11 +42,7 @@ variable "ssh_key_name" {
   type        = string
   default = null
 }
-variable "ssm_security_group_id" {
-  description = ""
-  type        = string
-}
-variable "builders_security_group_id" {
+variable "vpc_endpoints_security_group_id" {
   description = ""
   type        = string
 }
