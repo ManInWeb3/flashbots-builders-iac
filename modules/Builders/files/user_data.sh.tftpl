@@ -93,10 +93,10 @@ ARCHIVE=$(mktemp /tmp/XXXXXXXXX.tar.gz)
 TMP_DIR=$(mktemp -d)
 curl -Lo $ARCHIVE $NIMBUS_RELEASE_URL
 EXTRACTED_DIR=$(basename $NIMBUS_RELEASE_URL .tar.gz)
-tar xzvf $ARCHIVE -C $TMP_DIR $EXTRACTED_DIR/build/nimbus_beacon_node
-mv $EXTRACTED_DIR/build/nimbus_beacon_node $NIMBUS_BIN
+tar xzvf $ARCHIVE -C $TMP_DIR
+mv $TMP_DIR/$EXTRACTED_DIR/build/nimbus_beacon_node $NIMBUS_BIN
 chmod a+x $NIMBUS_BIN
-rm -rf $ARCHIVE $EXTRACTED_DIR
+rm -rf $ARCHIVE $TMP_DIR/$EXTRACTED_DIR
 
 ##* Create data folder
 mkdir -p $DATA_DIR/${ethereum_network}/$(basename $NIMBUS_BIN)
