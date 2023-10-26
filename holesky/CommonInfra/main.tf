@@ -1,4 +1,4 @@
-module "vpc" {
+module "vpc_holesky" {
   source  = "../../modules/CommonInfra"
 
   name = local.name
