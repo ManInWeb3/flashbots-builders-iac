@@ -16,10 +16,11 @@ module "builders" {
   #* If you need to add arguments, add them in builder_AdditionalArgs list
   builder_AdditionalArgs = [
     "--http --http.api eth,net,engine,admin",
-    "--cache=256",
+    "--cache=256", # Only on small RAM vm
     "--builder",
     "--builder.local_relay",
     "--builder.beacon_endpoints=http://127.0.0.1:3500",
+    "--metrics"
   ]
 
   # prysm_release   = null #"v4.1.0"
@@ -39,7 +40,7 @@ module "builders" {
   }
 
   # Commont Builders settings
-  ssh_key_name = null #"vlad"
+  ssh_key_name = "vlad"
   builders_instance_type = "t3.medium"  #"t3.micro"
   root_volume_size       = 20
   data_volume_size       = 10
