@@ -143,7 +143,7 @@ done
 
 #* Enabling and Starting services
 systemctl enable $BUILDER_SYSTEMD_SERVICE
-# systemctl start $(basename $BUILDER_SYSTEMD_SERVICE)
+systemctl start $(basename $BUILDER_SYSTEMD_SERVICE)
 
 systemctl enable $NIMBUS_SYSTEMD_SERVICE
-# systemctl start $(basename $NIMBUS_SYSTEMD_SERVICE)
+systemctl start $(basename $NIMBUS_SYSTEMD_SERVICE)
