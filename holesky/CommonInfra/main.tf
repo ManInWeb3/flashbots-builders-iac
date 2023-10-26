@@ -1,9 +1,9 @@
 module "vpc_holesky" {
   source  = "../../modules/CommonInfra"
 
-  name = local.name
-  cidr = local.vpc_cidr
+  azs      = local.azs
+  region   = local.region
 
-  azs                 = local.azs
-  public_subnets      = local.vpc_cidr
+  vpc_cidr = local.vpc_cidr
+  ethereum_network = local.ethereum_network
 }

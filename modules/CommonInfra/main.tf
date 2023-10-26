@@ -10,10 +10,10 @@ module "vpc" {
   version = ">= 5.1.2, < 6.0.0"
 
   name = local.name
-  cidr = local.vpc_cidr
+  cidr = var.vpc_cidr
 
-  azs                 = local.azs
-  public_subnets      = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 4)]
+  azs                 = var.azs
+  public_subnets      = [for k, v in local.azs : cidrsubnet(var.vpc_cidr, 8, k + 4)]
 
   tags = local.tags
 

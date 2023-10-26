@@ -2,9 +2,9 @@
 locals {
   tags = {
     Component       = "builders-CommonInfra"
-    EthereumNetwork = local.ethereum_network
+    EthereumNetwork = var.ethereum_network
     Team            = "devops@ttt.com"
     GithubRepo      = "flashbots-builders-iac"
   }
-  name   = "${local.ethereum_network}-builders"
+  name   = "${var.ethereum_network}-builders"
 }
