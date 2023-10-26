@@ -1,3 +1,7 @@
+locals{
+  # To be able to re-use it in provider
+  region = "us-east-1"
+}
 module "builders" {
   source  = "../../modules/Builders"
 
@@ -5,10 +9,10 @@ module "builders" {
   builder_release = "v1.13.2-4844.dev5.c786eb74f"
 
   #* Builder command already have the following arguments auto configured:
-  #* --${local.ethereum_network}
+  #* --${ethereum_network}
   #* --authrpc.jwtsecret=$BUILDER_JWT_PATH
-  #* --datadir=$DATA_DIR/${local.ethereum_network}/$(basename $BUILDER_BIN)
-  #* --log.file=$DATA_DIR/${local.ethereum_network}/$(basename $BUILDER_BIN)_$BUILDER_RELEASE.log
+  #* --datadir=$DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN)
+  #* --log.file=$DATA_DIR/${ethereum_network}/$(basename $BUILDER_BIN)_$BUILDER_RELEASE.log
   #* If you need to add arguments, add them in builder_AdditionalArgs list
   builder_AdditionalArgs = [
     "--http --http.api eth,net,engine,admin",
@@ -22,7 +26,7 @@ module "builders" {
   nimbus_release  = "v23.10.0"
 
   ethereum_network = "holesky"
-  region           = "us-east-1"
+  region           = local.region   # See above
   vpc_id           = "vpc-085701af4f385bba2"
 
   builder_instances = {
