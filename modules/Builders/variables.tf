@@ -11,12 +11,22 @@ variable "ethereum_network" {
   type        = string
 }
 variable "builder_release" {
-  description = "AWS region's azs"
+  description = ""
   type        = string
 }
+variable "builder_AdditionalArgs" {
+  description = "List of additional args to pass to the builder exec cmd"
+  type        = list(string)
+}
 variable "prysm_release" {
-  description = "AWS region's azs"
+  description = ""
   type        = string
+  default     = null
+}
+variable "nimbus_release" {
+  description = ""
+  type        = string
+  default     = null
 }
 variable "root_volume_size" {
   description = ""
@@ -39,7 +49,7 @@ variable "builders_instance_type" {
 variable "ssh_key_name" {
   description = "If null, then ssh access will be disabled"
   type        = string
-  default = null
+  default     = null
 }
 variable "vpc_endpoints_security_group_id" {
   description = ""

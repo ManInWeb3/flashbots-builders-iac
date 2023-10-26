@@ -102,7 +102,9 @@ module "builder_instances" {
   user_data_base64 = base64encode(templatefile("../../modules/Builders/files/user_data.sh.tftpl", {
     ethereum_network = var.ethereum_network
     builder_release  = var.builder_release
-    prysm_release    = var.prysm_release
+    builder_AdditionalArgsStr = join(" ", var.builder_AdditionalArgs)
+    # prysm_release    = var.prysm_release
+    nimbus_release   = var.nimbus_release
     builder_name     = each.key
     data_volume_id   = aws_ebs_volume.data[each.key].id
     aws_region       = var.region
