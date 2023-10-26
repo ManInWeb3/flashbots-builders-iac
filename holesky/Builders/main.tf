@@ -39,15 +39,15 @@ module "builder_security_group" {
 
   vpc_id = local.vpc_id
 
-    #! OPTIONAL p2p ports
+  #! OPTIONAL p2p ports
   ingress_with_cidr_blocks = [
-    # {
-    #   from_port     = 22
-    #   to_port     = 22
-    #   protocol    = "tcp"
-    #   description = "SSH from vlad"
-    #   cidr_blocks = "121.98.71.217/32"
-    # },
+    {
+      from_port     = 22
+      to_port     = 22
+      protocol    = "tcp"
+      description = "SSH from vlad"
+      cidr_blocks = "121.98.71.217/32"
+    },
     # {
     #   from_port     = 30303
     #   to_port     = 30303
@@ -105,7 +105,7 @@ module "builder_instances" {
   for_each = local.builder_instances
 
   name                   = each.key
-  # key_name = "vlad"                                                           
+  key_name = "vlad"                                                           
   ami                    = data.aws_ami.ubuntu2204.id
   instance_type          = local.builders_instance_type
   availability_zone      = data.aws_subnet.this[each.key].availability_zone

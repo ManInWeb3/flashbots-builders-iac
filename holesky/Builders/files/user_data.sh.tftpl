@@ -142,7 +142,7 @@ done
 
 #* Enabling and Starting services
 systemctl enable $BUILDER_SYSTEMD_SERVICE
-systemctl start $(basename $BUILDER_SYSTEMD_SERVICE)
+# systemctl start $(basename $BUILDER_SYSTEMD_SERVICE)
 
 systemctl enable $PRYSM_BC_SYSTEMD_SERVICE
-systemctl start $(basename $PRYSM_BC_SYSTEMD_SERVICE)
+# systemctl start $(basename $PRYSM_BC_SYSTEMD_SERVICE)
