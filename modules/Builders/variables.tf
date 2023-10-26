@@ -28,9 +28,9 @@ variable "data_volume_size" {
 }
 variable "builder_instances" {
   description = ""
-  type        = object({
+  type        = map(object({
     subnet_id = string
-  })
+  }))
 }
 variable "builders_instance_type" {
   description = ""

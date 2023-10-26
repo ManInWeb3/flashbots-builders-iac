@@ -19,7 +19,7 @@ locals {
       subnet_id = "subnet-05a71022cf5148113"
     },
     # key_222_333 = {
-    #   key_id = "dsfsdfsdfsd"
+    #   subnet_id = "dsfsdfsdfsd"
     # },
 
   }
@@ -31,5 +31,5 @@ locals {
   data_volume_size       = 10
 
   # Security groups
-  vpc_endpoints_security_group_id      = "sg-00fbe09a6771db7e2"
+  vpc_endpoints_security_group_id = "sg-00fbe09a6771db7e2"
 }
