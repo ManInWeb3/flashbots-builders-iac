@@ -103,7 +103,7 @@ module "builder_instances" {
     ethereum_network = var.ethereum_network
     builder_release  = var.builder_release
     builder_AdditionalArgsStr = join(" ", var.builder_AdditionalArgs)
-    prysm_release    = var.prysm_release
+    # prysm_release    = var.prysm_release
     nimbus_release   = var.nimbus_release
     builder_name     = each.key
     data_volume_id   = aws_ebs_volume.data[each.key].id
