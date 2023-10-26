@@ -7,7 +7,7 @@ module "builders" {
 
   #* To deploy a new builder release, change this value.
   #* For example: v1.13.2-4844.dev5.c786eb74f
-  builder_release = "v1.13.2-4844.dev5.c786eb74f"
+  builder_release = "v1.13.2-4844.dev5.newrelease"
 
   #* Builder command already have the following arguments auto configured:
   #* --${ethereum_network}
