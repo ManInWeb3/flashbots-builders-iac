@@ -49,7 +49,7 @@ variable "builders_instance_type" {
 variable "ssh_key_name" {
   description = "If null, then ssh access will be disabled"
   type        = string
-  default = null
+  default     = null
 }
 variable "vpc_endpoints_security_group_id" {
   description = ""

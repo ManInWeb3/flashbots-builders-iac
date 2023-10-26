@@ -39,7 +39,7 @@ locals {
   }
 
   # Commont Builders settings
-  # ssh_key_name = "vlad"
+  ssh_key_name = null #"vlad"
   builders_instance_type = "t3.medium"  #"t3.micro"
   root_volume_size       = 20
   data_volume_size       = 10
