@@ -17,7 +17,6 @@ module "builders" {
   #* If you need to add more arguments, add them in builder_AdditionalArgs list
   builder_AdditionalArgs = [
     "--http --http.api eth,net,engine,admin",
-    "--cache=256", # Only on small RAM vm
     "--builder",
     "--builder.local_relay",
     "--builder.beacon_endpoints=http://127.0.0.1:3500",
@@ -26,7 +25,7 @@ module "builders" {
 
   # prysm_release   = null #"v4.1.0"
   #* Beacon node release tag
-  nimbus_release  = "v23.10.0"
+  nimbus_release  = "v23.9.1"
 
   #* Ethereum network to deploy
   ethereum_network = "holesky"
@@ -48,7 +47,7 @@ module "builders" {
         "--builder.beacon_endpoints=http://127.0.0.1:3500",
         "--metrics"
       ]
-      override_builder_release = "v1.13.2-4844.dev5.newrelease"
+      override_builder_release = "v1.13.2-4844.dev5.c786eb74f"
       override_nimbus_release  = "v23.10.0"
     },
     # "builder-222_333" = {
