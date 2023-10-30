@@ -101,10 +101,11 @@ module "builder_instances" {
   user_data_replace_on_change = true     #! Re-create the instance if user_data changed, which is when new release deployed
   user_data_base64 = base64encode(templatefile("../../modules/Builders/files/user_data.sh.tftpl", {
     ethereum_network = var.ethereum_network
-    builder_release  = var.builder_release
-    builder_AdditionalArgsStr = join(" ", var.builder_AdditionalArgs)
-    # prysm_release    = var.prysm_release
-    nimbus_release   = var.nimbus_release
+    builder_release  = lookup(each.value, "override_builder_release", null) != null ? each.value.override_builder_release : var.builder_release
+    builder_AdditionalArgsStr = join(" ",
+                                  lookup(each.value, "override_builder_AdditionalArgs", null) != null ? each.value.override_builder_AdditionalArgs : var.builder_AdditionalArgs
+                                  )
+    nimbus_release   = lookup(each.value, "override_nimbus_release", null) != null ? each.value.override_nimbus_release : var.nimbus_release
     builder_name     = each.key
     data_volume_id   = aws_ebs_volume.data[each.key].id
     aws_region       = var.region

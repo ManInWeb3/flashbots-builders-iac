@@ -40,7 +40,30 @@ module "builders" {
     #* builder_name - Name of the instance and secret name, which stores the secret key ($BUILDER_TX_SIGNING_KEY) to run builder with
     "builder-111_333" = {
       subnet_id = "subnet-05a71022cf5148113"
+      override_builder_AdditionalArgs = [
+        "--http --http.api eth,net,engine,admin",
+        "--cache=256", # Only on small RAM vm
+        "--builder",
+        "--builder.local_relay",
+        "--builder.beacon_endpoints=http://127.0.0.1:3500",
+        "--metrics"
+      ]
+      override_builder_release = "v1.13.2-4844.dev5.newrelease"
+      override_nimbus_release  = "v23.10.0"
     },
+    # "builder-222_333" = {
+    #   subnet_id = "subnet-05a71022cf5148113"
+    #   override_builder_AdditionalArgs = [
+    #     "--http --http.api eth,net,engine,admin",
+    #     "--cache=256", # Only on small RAM vm
+    #     "--builder",
+    #     "--builder.local_relay",
+    #     "--builder.beacon_endpoints=http://127.0.0.1:3500",
+    #     "--metrics"
+    #   ]
+    #   override_builder_release = "v1.13.2-4844.dev5.newrelease"
+    #   override_nimbus_release  = "v23.10.0"
+    # },
   }
 
   #* Builders common settings
