@@ -1,6 +1,6 @@
 # Terraform Workspaces for Flashbots Builder Instances
 
-This repository contains Terraform workspaces for deploying [Flashbots Builder releases](https://github.com/ManInWeb3/flashbots-builder/releases) as AWS EC2 instances.
+This repository is dedicated to managing the infrastructure and deployment of [Flashbots Builder releases](https://github.com/ManInWeb3/flashbots-builder/releases) instances on AWS. It is primarily used for automation, configuration, and provisioning of resources required to run Flashbots Builder software.
 
 ## Release and Deployment Architecture
 ![Release and Deployment Architecture Diagram](.resources/architecture_diagram.png)
@@ -14,11 +14,11 @@ This repository contains Terraform workspaces for deploying [Flashbots Builder r
    - **Artifacts**: VPC, Security groups, and builder instances
    - **Dependencies**: Builder's secret keys (step 4) must be created manually.
 
-3. **Builder Instances**: These are the actual builder instances, and you can find more details in the [builders' instances repository](https://github.com/ManInWeb3/flashbots-builders-iac/tree/main/holesky/Builders/).
+3. **Builder Instances**: These are the actual builder instances, and you can find more details in the [builders' instances workspace](https://github.com/ManInWeb3/flashbots-builders-iac/tree/main/holesky/Builders/).
 
-4. **Builder Secret Keys**: Builders' secret keys are stored in AWS Secret Manager.
+4. **Builder Secret Keys**: Builders' private to sign payment transaction, stored in AWS Secret Manager. Will be passed as `BUILDER_TX_SIGNING_KEY` environment variable to builder's process.
 
-5. **Common Infrastructure**: The [common infrastructure repository](https://github.com/ManInWeb3/flashbots-builders-iac/tree/main/holesky/CommonInfra) contains resources shared among the builder instances.
+5. **Common Infrastructure**: The [common infrastructure workspace](https://github.com/ManInWeb3/flashbots-builders-iac/tree/main/holesky/CommonInfra) contains resources shared among the builder instances.
 
 6. **Builder EC2 Instances**: These instances are configured using a [user_data](https://github.com/ManInWeb3/flashbots-builders-iac/blob/main/modules/Builders/files/user_data.sh.tftpl) script.
    - *Builder secret keys are read with [the instance's user_data script](https://github.com/ManInWeb3/flashbots-builders-iac/blob/main/modules/Builders/files/user_data.sh.tftpl#L71), so they are not saved in the Terraform state.*
