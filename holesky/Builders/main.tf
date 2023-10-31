@@ -1,7 +1,7 @@
 locals{
   #* BUILDERs common settings
-  region = "us-east-1"
-  ethereum_network = "holesky"    #* Ethereum network to conect the builders
+  region                 = "us-east-1"
+  ethereum_network       = "holesky"    #* Ethereum network to conect the builders
   ssh_key_name           = "vlad"    # Only to rsync data, to access instance's console use Session manager
   builders_instance_type = "t3.medium"             #"t3.micro"  #
   root_volume_size       = 20
