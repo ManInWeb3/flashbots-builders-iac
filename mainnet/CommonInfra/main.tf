@@ -1,4 +1,3 @@
-
 locals {
   #* Define in locals to re-use in provider
   region = "us-east-1"
@@ -10,6 +9,6 @@ module "vpc_holesky" {
   azs      = ["us-east-1a"]
   region   = local.region
 
-  vpc_cidr = "10.0.0.0/16"
-  ethereum_network = "holesky"
+  vpc_cidr = "192.168.0.0/16"
+  ethereum_network = "mainnet"
 }
