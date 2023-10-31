@@ -1,4 +1,4 @@
-# Ethereum mainnnet builders
+# Ethereum HOLESKY builders
 Terraform workspace deploing [Builder releases](https://github.com/ManInWeb3/flashbots-builder/releases) to [EC2 instances](https://github.com/ManInWeb3/flashbots-builders-iac/blob/main/holesky/Builders/main.tf#L38).
 
 The module will create:
