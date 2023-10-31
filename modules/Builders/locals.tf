@@ -29,7 +29,6 @@ locals {
 
   tags = {
     Component   = "builder"
-    Builder_release = var.builder_release
     Environment = var.ethereum_network
     Team        = "devops@ttt.com"
     GithubRepo  = "flashbots-builders-iac"
