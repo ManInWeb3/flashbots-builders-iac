@@ -3,7 +3,7 @@ locals{
   region = "us-east-1"
   ethereum_network = "holesky"    #* Ethereum network to conect the builders
   ssh_key_name           = null #"vlad"    # Only to rsync data, to access instance's console use Session manager
-  builders_instance_type = "t3.micro"  #"t3.medium"             #
+  builders_instance_type = "t3.medium"             #"t3.micro"  #
   root_volume_size       = 20
   data_volume_size       = 10
   vpc_id                 = "vpc-085701af4f385bba2"
