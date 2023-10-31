@@ -14,13 +14,12 @@ data "aws_ami" "ubuntu2204" {
   }
 }
 
+# Create a data volume for each instance
 resource "aws_ebs_volume" "data" {
   for_each = var.builder_instances
 
   availability_zone = data.aws_subnet.this[each.key].availability_zone
   size      = var.data_volume_size
-  encrypted = true
-  type      = "gp3"
 
   tags = merge(
     {
@@ -31,6 +30,7 @@ resource "aws_ebs_volume" "data" {
   )
 }
 
+# Builders' security group
 module "builder_security_group" {
   source  = "terraform-aws-modules/security-group/aws"
   version = ">= 5.1.0, < 6.0.0"
@@ -46,12 +46,12 @@ module "builder_security_group" {
   tags = local.tags
 }
 
-# Secret-manager IAM policy
 data "aws_secretsmanager_secret" "secret" {
   for_each = var.builder_instances
   name     = each.key
 }
 
+# Secret-manager IAM policy
 resource "aws_iam_policy" "get_secret" {
   for_each = var.builder_instances
 
@@ -70,10 +70,8 @@ resource "aws_iam_policy" "get_secret" {
             "Resource": [data.aws_secretsmanager_secret.secret[each.key].arn]
         }
     ]
-})
+  })
 }
-            #     "arn:aws:secretsmanager:us-east-1:075125828640:secret:test_key-64px7P"
-            # ]
 
 module "builder_instances" {
   source  = "terraform-aws-modules/ec2-instance/aws"
@@ -93,19 +91,14 @@ module "builder_instances" {
     var.vpc_endpoints_security_group_id,
   ]
 
-  #* External IP to expose p2p
-  #* This is optional, can be without external IP,
-  #* then we need NAT gw to connect to the Internet
-  associate_public_ip_address = true
-  ignore_ami_changes = true              #! Don't re-create instance if newer image found
-  user_data_replace_on_change = true     #! Re-create the instance if user_data changed, which is when new release deployed
+  associate_public_ip_address = true     #* This is optional, can be without external IP, then we need NAT gw to connect to the Internet
+  ignore_ami_changes = true              #* Don't re-create instance if newer image found
+  user_data_replace_on_change = true     #* Re-create the instance if user_data changed, which is when new release deployed
   user_data_base64 = base64encode(templatefile("../../modules/Builders/files/user_data.sh.tftpl", {
     ethereum_network = var.ethereum_network
-    builder_release  = lookup(each.value, "override_builder_release", null) != null ? each.value.override_builder_release : var.builder_release
-    builder_AdditionalArgsStr = join(" ",
-                                  lookup(each.value, "override_builder_AdditionalArgs", null) != null ? each.value.override_builder_AdditionalArgs : var.builder_AdditionalArgs
-                                  )
-    nimbus_release   = lookup(each.value, "override_nimbus_release", null) != null ? each.value.override_nimbus_release : var.nimbus_release
+    builder_release  = each.value.builder_release
+    builder_AdditionalArgsStr = join(" ", each.value.builder_AdditionalArgs)
+    nimbus_release   = each.value.nimbus_release
     builder_name     = each.key
     data_volume_id   = aws_ebs_volume.data[each.key].id
     aws_region       = var.region
@@ -118,7 +111,7 @@ module "builder_instances" {
     },
   ]
 
-  #* SSM Session Manager
+  #* SSM Session Manager's roles
   create_iam_instance_profile = true
   iam_role_description        = "IAM role for Builders EC2 instance"
   iam_role_policies = {
@@ -128,12 +121,15 @@ module "builder_instances" {
 
   tags = merge(
     {
-      "BUILDER_TX_SIGNING_KEY_SECRET_NAME" = each.key,
+      "BUILDER_TX_SIGNING_KEY_SECRET_NAME" = each.key
+      "BUILDER_release" = each.value.builder_release
+      "NIMBUS_release"  = each.value.nimbus_release
     },
     local.tags
   )
 }
 
+#* Attache the data volume
 resource "aws_volume_attachment" "data" {
   depends_on = [
     aws_ebs_volume.data,
