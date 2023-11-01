@@ -26,7 +26,9 @@ locals{
     "--builder",
     "--builder.local_relay",
     "--builder.beacon_endpoints=http://127.0.0.1:3500",
-    "--metrics"
+    "--metrics",
+    "--metrics.addr=127.0.0.1",
+    "--metrics.builder",
   ]
 
   #* NIMBUS release name to deploy
@@ -51,7 +53,9 @@ locals{
           "--builder",
           "--builder.local_relay",
           "--builder.beacon_endpoints=http://127.0.0.1:3500",
-          "--metrics"
+          "--metrics",
+          "--metrics.addr=127.0.0.1",
+          "--metrics.builder",
         ]
         override_builder_release = "v1.13.2-4844.dev5.c786eb74f"
         # override_nimbus_release  = "v23.10.0"
