@@ -57,7 +57,7 @@ locals{
           "--metrics.addr=127.0.0.1",
           "--metrics.builder",
         ]
-        override_builder_release = "v1.13.2-4844.dev5.c786eb74f"
+        override_builder_release = "v1.13.2-4844.dev5.therelease"
         # override_nimbus_release  = "v23.10.0"
       }
       # "builder-222_333" = {
