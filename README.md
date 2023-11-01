@@ -4,7 +4,7 @@ This repository is dedicated to managing the infrastructure and deployment of [F
 
 ## How to deploy a new release
 
-#### General flow, deploy a new release to all instances without `override_builder_release` specified.
+#### General flow, deploy a new release to all instances without `override_builder_release` specified:
 1. Create a new Branch and change [builder_release](https://github.com/ManInWeb3/flashbots-builders-iac/blob/main/holesky/Builders/main.tf#L15) to the new tag.
 2. Create a Pull Request into master, review and merge it.
 3. Plan and Apply terraform [workspace](https://github.com/ManInWeb3/flashbots-builders-iac/tree/main/holesky/Builders/) in terraform cloud or localy, depending on your setup.
