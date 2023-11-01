@@ -2,6 +2,18 @@
 
 This repository is dedicated to managing the infrastructure and deployment of [Flashbots Builder releases](https://github.com/ManInWeb3/flashbots-builder/releases) instances on AWS. It is primarily used for automation, configuration, and provisioning of resources required to run Flashbots Builder software.
 
+## How to deploy a new release
+
+#### General flow, deploy a new release to all instances without `override_builder_release` specified.
+1. Create a new Branch and change [builder_release](https://github.com/ManInWeb3/flashbots-builders-iac/blob/main/holesky/Builders/main.tf#L15) to the new tag.
+2. Create a Pull Request into master, review and merge it.
+3. Plan and Apply terraform [workspace](https://github.com/ManInWeb3/flashbots-builders-iac/tree/main/holesky/Builders/) in terraform cloud or localy, depending on your setup.
+
+#### To deploy the new release to a subset of builder instances (canary release):
+1. Create a new Branch and change [override_builder_release](https://github.com/ManInWeb3/flashbots-builders-iac/blob/main/holesky/Builders/main.tf#L56) to the new tag in the desired subset of instances.
+2. Create a Pull Request into master, review and merge it.
+3. Plan and Apply terraform [workspace](https://github.com/ManInWeb3/flashbots-builders-iac/tree/main/holesky/Builders/) in terraform cloud or localy, depending on your setup.
+
 ## Release and Deployment Architecture
 ![Release and Deployment Architecture Diagram](.resources/architecture_diagram.png)
 
